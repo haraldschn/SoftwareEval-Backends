@@ -35,7 +35,8 @@ private:
 	InstructionTrace_RV32IM_Zicsr,
 	AssemblyTrace_RV64,
 	CVA6,
-	InstructionTrace_RV64IMF_Zicsr 
+	InstructionTrace_RV64IMF_Zicsr,
+	RV32_4ISSUE 
   };
 public:
   int getVariantHandle(std::string);
