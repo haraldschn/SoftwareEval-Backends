@@ -18,7 +18,7 @@
 #define RV32_4ISSUE_DYNAMIC_BRANCH_PREDICT_MODEL_H
 
 #include <stdbool.h>
-#include <array>
+#include <stack>
 #include <cstdint>
 
 #include "PerformanceModel.h"
@@ -53,9 +53,8 @@ public:
   bool getPrediction(uint64_t, uint64_t);
   void update(uint64_t, bool);
 private:
-  std::array<std::array<BranchHistoryEntry, 1024>, 2> tab;
-  int getPageIndex(uint64_t pc_) { return ((pc_ & 0x00000002) >> 1); };
-  int getRowIndex(uint64_t pc_) { return ((pc_ & 0x00000FFC) >> 2); };
+  std::array<BranchHistoryEntry, 4096> tab;
+  int getIndex(uint64_t pc_) { return ((pc_ & 0x00001FFE) >> 1); };
 };
 
 
@@ -73,7 +72,7 @@ public:
   void push(uint64_t);
   uint64_t pop(void);
 private:
-  std::array<ReturnAddressEntry,2> stack;
+  std::stack<ReturnAddressEntry> stack;
 };
 
 
@@ -90,16 +89,15 @@ public:
   uint64_t getPrediction(uint64_t);
   void update(uint64_t, uint64_t);
 private:
-  std::array<std::array<TargetBufferEntry,1024>,2> tab;
-  int getPageIndex(uint64_t pc_) { return ((pc_ & 0x00000002) >> 1); };
-  int getRowIndex(uint64_t pc_) { return ((pc_ & 0x00000FFC) >> 2); };
+  std::array<TargetBufferEntry, 4096> tab;
+  int getIndex(uint64_t pc_) { return ((pc_ & 0x00001FFE) >> 1); };
 };
 
   
 class BranchPredictionModel : public ConnectorModel
 {
 public:
-  BranchPredictionModel(PerformanceModel* parent_) : ConnectorModel("CVA6_BranchPredictionModel", parent_), bht(), ras(), btb() {};
+  BranchPredictionModel(PerformanceModel* parent_) : ConnectorModel("RV32_4ISSUE_BranchPredictionModel", parent_), bht(), ras(), btb() {};
    
   // API
   void setPc_p(uint64_t);
@@ -109,12 +107,9 @@ public:
   uint64_t getPc_mp(void);
   uint64_t getPc_pt(void);
 
-  // Used for model evaluation TODO: Delete?
-  std::string getInfo_mispredict(void) { return std::to_string(isMispredict); };
-  std::string getInfo_taken(void) { return std::to_string(isTaken); };
-  //std::string getInfo_predictedTaken(void) { return std::to_string(branchPredictedTaken); };
-  //std::string getInfo_pc_pt(void) { return std::to_string(t_pc_pt); };
-  //std::string getInfo_pc_mp(void) { return std::to_string(t_pc_mp); };
+  // Tracing API
+  std::string getInfoHeader();
+  std::string getInfoStream();
   
   // Trace values
   uint64_t* pc_ptr;
@@ -148,7 +143,7 @@ private:
   bool isReturn(void) {return ( (rs1_ptr[getInstrIndex()] != rd_ptr[getInstrIndex()]) & ((rs1_ptr[getInstrIndex()] == 1) | (rs1_ptr[getInstrIndex()] == 5)) ); };
   
   // TODO: Use for model evaluation. DELETE!
-  uint64_t pc_pt = 0;
+  uint64_t pc_info = 0;
   
 };
 

@@ -19,6 +19,8 @@
 #include "models/rv32_4issue/DCacheModel.h"
 
 #include <cstdint>
+#include <string>
+#include <sstream>
 
 namespace rv32_4issue {
 
@@ -81,5 +83,19 @@ int DCacheModel::lfsr(void) {
     shift_state = (shift_state << 1) | (shift_in & 0x01);
     return (shift_state & 0x07);
 }
+
+std::string DCacheModel::getInfoHeader()
+{
+  std::stringstream ret_strs;
+  ret_strs << "L1D:miss";
+  return ret_strs.str();
+}
+
+std::string DCacheModel::getInfoStream()
+{
+  std::stringstream ret_strs;
+  ret_strs << isMiss;  
+  return ret_strs.str();
+} 
 
 }  // namespace rv32_4issue

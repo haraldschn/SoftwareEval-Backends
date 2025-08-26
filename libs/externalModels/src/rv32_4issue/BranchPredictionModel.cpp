@@ -16,7 +16,9 @@
 
 #include "models/rv32_4issue/BranchPredictionModel.h"
 
-#include <stdbool.h>
+#include <cstdint>
+#include <string>
+#include <sstream>
 
 namespace rv32_4issue {
 
@@ -55,38 +57,42 @@ void PredictFsm::update(bool taken_)
 bool BranchHistoryTable::getPrediction(uint64_t pc_, uint64_t imm_)
 {
   // TODO: Different behavior for unaligned!
-  if (!tab[getPageIndex(pc_)][getRowIndex(pc_)].valid)
+  if (!tab[getIndex(pc_)].valid)
   {
     // Predict taken if imm is negative
     return (int64_t(imm_) < 0);
   }
-  return tab[getPageIndex(pc_)][getRowIndex(pc_)].state.getPrediction();
+  return tab[getIndex(pc_)].state.getPrediction();
 }
 
 void BranchHistoryTable::update(uint64_t pc_, bool taken_)
 {  
-  tab[getPageIndex(pc_)][getRowIndex(pc_)].valid = true;
-  tab[getPageIndex(pc_)][getRowIndex(pc_)].state.update(taken_);
+  tab[getIndex(pc_)].valid = true;
+  tab[getIndex(pc_)].state.update(taken_);
 }
 
 void ReturnAddressStack::push(uint64_t ra_)
 {
-  stack[1].valid = stack[0].valid;
-  stack[1].addr = stack[0].addr;
-  
-  stack[0].addr = ra_;
-  stack[0].valid = true;
+  ReturnAddressEntry new_entry;
+  new_entry.addr = ra_;
+  new_entry.valid = true;
+
+  stack.push(new_entry);
 }
 
 uint64_t ReturnAddressStack::pop(void)
 {
-  uint64_t ret = stack[0].valid ? stack[0].addr : INVALID_BRANCH_ADDRESS;
+  uint64_t ret = INVALID_BRANCH_ADDRESS;
 
-  stack[0].valid = stack[1].valid;
-  stack[0].addr = stack[1].addr;
-  
-  stack[1].addr = 0;
-  stack[1].valid = false;
+  if(!stack.empty()) {
+    ReturnAddressEntry pop_val = stack.top();
+
+    if(pop_val.valid) {
+      ret = pop_val.addr;
+    }
+
+    stack.pop();
+  }
   
   return ret;
 }
@@ -94,17 +100,17 @@ uint64_t ReturnAddressStack::pop(void)
 uint64_t BranchTargetBuffer::getPrediction(uint64_t pc_)
 {
   // TODO: Different behavior for unaligned!
-  if(tab[getPageIndex(pc_)][getRowIndex(pc_)].valid)
+  if(tab[getIndex(pc_)].valid)
   {
-    return tab[getPageIndex(pc_)][getRowIndex(pc_)].addr;
+    return tab[getIndex(pc_)].addr;
   }
   return INVALID_BRANCH_ADDRESS;
 }
 
 void BranchTargetBuffer::update(uint64_t pc_, uint64_t taddr_)
 {
-  tab[getPageIndex(pc_)][getRowIndex(pc_)].valid = true;
-  tab[getPageIndex(pc_)][getRowIndex(pc_)].addr = taddr_;
+  tab[getIndex(pc_)].valid = true;
+  tab[getIndex(pc_)].addr = taddr_;
 }
 
 
@@ -234,7 +240,7 @@ uint64_t BranchPredictionModel::getPc_pt(void)
     branch_flag = false;
     if(!isMispredict & isTaken)
     {
-      pc_pt = t_pc_pt;
+      pc_info = t_pc_pt;
       return t_pc_pt;
     }   
   }
@@ -243,7 +249,7 @@ uint64_t BranchPredictionModel::getPc_pt(void)
   if(jump_flag)
   {
     jump_flag = false;
-    pc_pt = t_pc_pt;
+    pc_info = t_pc_pt;
     return t_pc_pt;
   }
 
@@ -254,14 +260,32 @@ uint64_t BranchPredictionModel::getPc_pt(void)
     return_flag = false;
     if(!isMispredict)
     {
-      pc_pt = t_pc_pt;
+      pc_info = t_pc_pt;
       return t_pc_pt;
     }
   }
   
   // Default: Branch/Jump was not correctly predicted
-  pc_pt = 0;
+  pc_info = 0;
   return 0; // Use 0 to disregard the pc_pt connector in any max operation
+}
+
+std::string BranchPredictionModel::getInfoHeader()
+{
+  std::stringstream ret_strs;
+  ret_strs << "br:taken";
+  ret_strs << "," << "br:mispredict";
+  ret_strs << "," << "br:pc_avail";
+  return ret_strs.str();
+}
+
+std::string BranchPredictionModel::getInfoStream()
+{
+  std::stringstream ret_strs;
+  ret_strs << isTaken;
+  ret_strs << "," << isMispredict;
+  ret_strs << "," << pc_info;
+  return ret_strs.str();
 }
 
 }  // namespace rv32_4issue

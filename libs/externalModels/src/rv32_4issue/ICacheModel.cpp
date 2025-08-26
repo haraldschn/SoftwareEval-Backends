@@ -19,6 +19,8 @@
 #include "models/rv32_4issue/ICacheModel.h"
 
 #include <cstdint>
+#include <string>
+#include <sstream>
 
 namespace rv32_4issue {
 
@@ -27,15 +29,30 @@ int ICacheModel::getDelay(void) {
 
     isMiss = !inCache(pc);
 
-    if (!cachable(pc) | isMiss) {
-        return MEMORY_DELAY;
+    // TODO: Move out of this external model of instruction cache
+    int fetch_delay = 0;
+    if((pc & 0x000000000000000F) == 0) {
+        fetch_delay = 1;
     }
-    return CACHE_DELAY;
+
+    if (!cachable(pc) | isMiss) {
+        return MEMORY_DELAY + fetch_delay;
+    }
+    return CACHE_DELAY + fetch_delay;
 }
 
 bool ICacheModel::inCache(uint64_t pc_) {
     uint64_t tag = (pc_ & 0x00FFFFFFFFFF0000) >> 16;   // pc_[55:16]
     uint64_t index = (pc_ & 0x000000000000FFF0) >> 4;  // pc_[15:4]
+
+    // Prefetch next instructions
+    updateCache(tag, (index + 1) % 4096);
+    
+    if(pc_ == 0x80000000) {
+        // Preload first instruction
+        updateCache(tag, index);
+        return true;
+    }
 
     for (int way_i = 0; way_i < 4; way_i++) {
         if (tag_cache[way_i][index].tag == tag) {
@@ -46,9 +63,6 @@ bool ICacheModel::inCache(uint64_t pc_) {
 
     // Cache miss
     updateCache(tag, index);
-    updateCache(tag, (index + 1) % 4096);
-    updateCache(tag, (index + 2) % 4096);
-    updateCache(tag, (index + 3) % 4096);
     return false;
 }
 
@@ -76,5 +90,19 @@ int ICacheModel::lfsr(void) {
     shift_state = (shift_state << 1) | (shift_in & 0x01);
     return (shift_state & 0x03);
 }
+
+std::string ICacheModel::getInfoHeader()
+{
+  std::stringstream ret_strs;
+  ret_strs << "L1I:miss";
+  return ret_strs.str();
+}
+
+std::string ICacheModel::getInfoStream()
+{
+  std::stringstream ret_strs;
+  ret_strs << isMiss;
+  return ret_strs.str();
+} 
 
 }  // namespace rv32_4issue

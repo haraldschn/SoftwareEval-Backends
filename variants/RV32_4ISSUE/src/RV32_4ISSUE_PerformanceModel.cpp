@@ -74,7 +74,10 @@ uint64_t RV32_4ISSUE_PerformanceModel::getCycleCount(void)
     ,EX_stage_alu.get(1)
     ,EX_substage_csr_div
     ,EX_substage_alu.get(1)
-    ,EX_substage_mul.get(1)
+    ,EX_substage_mul_1.get(1)
+    ,EX_substage_mul_2.get(1)
+    ,EX_substage_mul_3.get(1)
+    ,EX_substage_mul_4.get(1)
     ,EX_substage_branch.get(1)
     ,IS_substage_agu.get(1)
     ,LD_substage_agu.get(1)
@@ -97,6 +100,9 @@ std::string RV32_4ISSUE_PerformanceModel::getPipelineStream(void)
   ret_strs << "," << RN_stage.get(1);
   ret_strs << "," << OoO_stage.get(1);
   ret_strs << "," << COM_stage.get(1);
+  ret_strs << "," << dynBranchPredModel.getInfoStream();
+  ret_strs << "," << iCacheModel.getInfoStream();
+  ret_strs << "," << dCacheModel.getInfoStream();
   ret_strs << std::endl;
   return ret_strs.str();
 }
@@ -110,6 +116,9 @@ std::string RV32_4ISSUE_PerformanceModel::getPrintHeader(void)
   ret_strs << "," << "RN_stage";
   ret_strs << "," << "OoO_stage";
   ret_strs << "," << "COM_stage";
+  ret_strs << "," << dynBranchPredModel.getInfoHeader();
+  ret_strs << "," << iCacheModel.getInfoHeader();
+  ret_strs << "," << dCacheModel.getInfoHeader();
   ret_strs << std::endl;
   return ret_strs.str();
 }

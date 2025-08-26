@@ -20,8 +20,8 @@
 #define RV32_4ISSUE_D_CACHE_MODEL_H
 
 #include <stdbool.h>
-
 #include <cstdint>
+#include <string>
 
 #include "PerformanceModel.h"
 
@@ -35,13 +35,14 @@ struct DCacheEntry {
 class DCacheModel : public ResourceModel {
    public:
     // TODO: Check if delays are matching observations!
-    DCacheModel(PerformanceModel* parent_) : ResourceModel("ICacheModel", parent_), CACHE_DELAY(0), MEMORY_DELAY(1), NOT_CACHABLE_DELAY(1) {};
+    DCacheModel(PerformanceModel* parent_) : ResourceModel("DCacheModel", parent_), CACHE_DELAY(1), MEMORY_DELAY(8), NOT_CACHABLE_DELAY(8) {};
     virtual int getDelay(void);
     
     //void storeCache(void);
 
-    // Info print
-    std::string getInfo_miss(void) { return std::to_string(isMiss); };
+    // Tracing API
+    std::string getInfoHeader();
+    std::string getInfoStream();
 
     // Trace value
     uint64_t* addr_ptr;

@@ -45,13 +45,16 @@ public:
   RV32_4ISSUE_PerformanceModel() : PerformanceModel("RV32_4ISSUE", RV32_4ISSUE_SchedulingFunctionSet)
     ,IF_stage(4,0)
     ,DEC_stage(4,0)
-    ,RN_stage(4,0)
-    ,OoO_stage(48,0)
+    ,RN_stage(5,0)
+    ,OoO_stage(56,0)
     ,IS_substage_alu(24,0)
     ,LD_substage_alu(3,0)
     ,EX_stage_alu(9,0)
     ,EX_substage_alu(3,0)
-    ,EX_substage_mul(8,0)
+    ,EX_substage_mul_1(2,0)
+    ,EX_substage_mul_2(2,0)
+    ,EX_substage_mul_3(2,0)
+    ,EX_substage_mul_4(2,0)
     ,EX_substage_branch(2,0)
     ,IS_substage_agu(16,0)
     ,LD_substage_agu(2,0)
@@ -61,7 +64,7 @@ public:
     ,LD_substage_store(2,0)
     ,EX_stage_store(2,0)
     ,EX_substage_store(2,0)
-    ,COM_stage(4,0)
+    ,COM_stage(8,0)
     ,regModel(this)
     ,dynBranchPredModel(this)
     ,iCacheModel(this)
@@ -85,7 +88,10 @@ public:
   MultiElementTimingVariable LD_substage_alu;
   MultiElementTimingVariable EX_stage_alu;
   MultiElementTimingVariable EX_substage_alu;
-  MultiElementTimingVariable EX_substage_mul;
+  MultiElementTimingVariable EX_substage_mul_1;
+  MultiElementTimingVariable EX_substage_mul_2;
+  MultiElementTimingVariable EX_substage_mul_3;
+  MultiElementTimingVariable EX_substage_mul_4;
   MultiElementTimingVariable EX_substage_branch;
   MultiElementTimingVariable IS_substage_agu;
   MultiElementTimingVariable LD_substage_agu;
