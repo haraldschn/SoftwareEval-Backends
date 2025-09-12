@@ -27,19 +27,22 @@ namespace rv32_4issue {
 int DCacheModel::getDelay(void) {
     uint64_t addr = addr_ptr[getInstrIndex()];
 
-    //printf("add=%ld\n", addr);
+    //printf("addr=%lx", (uint32_t)addr);
 
     // TODO: Robert's model calculates an additional delay here if address is blocked by a preceding store!
 
     if (!cachable(addr)) {
         isMiss = true;
+        //printf(", DELAY=%d\n", NOT_CACHABLE_DELAY);
         return NOT_CACHABLE_DELAY;
     }
     if (inCache(addr)) {
         isMiss = false;
+        //printf(", DELAY=%d\n", CACHE_DELAY);
         return CACHE_DELAY;
     }
     isMiss = true;
+    //printf(", DELAY=%d\n", MEMORY_DELAY);
     return MEMORY_DELAY;
 }
 

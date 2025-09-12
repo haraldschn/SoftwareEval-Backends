@@ -53,6 +53,7 @@ class ICacheModel : public ResourceModel {
     ICacheEntry tag_cache[4][4096];
     // bool valid_cache[4][256]= {false};
     bool isMiss = false;
+    uint64_t pc_prev = 0x80000000-4;
 
     // Time when ICache relaeses block on miss
     uint64_t t_ic = 0;

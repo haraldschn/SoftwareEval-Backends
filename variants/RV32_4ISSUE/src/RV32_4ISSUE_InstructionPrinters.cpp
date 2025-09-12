@@ -491,8 +491,8 @@ static InstructionPrinter *instrPrinter_div = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     return ret_strs.str();
   }
 );
@@ -509,8 +509,8 @@ static InstructionPrinter *instrPrinter_rem = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     return ret_strs.str();
   }
 );
@@ -527,8 +527,8 @@ static InstructionPrinter *instrPrinter_divu = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     return ret_strs.str();
   }
 );
@@ -545,8 +545,8 @@ static InstructionPrinter *instrPrinter_remu = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2_data() << " | ";
     return ret_strs.str();
   }
 );
@@ -671,7 +671,7 @@ static InstructionPrinter *instrPrinter_sb = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
@@ -689,7 +689,7 @@ static InstructionPrinter *instrPrinter_sh = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
@@ -707,7 +707,7 @@ static InstructionPrinter *instrPrinter_sw = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
@@ -725,8 +725,8 @@ static InstructionPrinter *instrPrinter_lw = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
+    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
 );
@@ -743,8 +743,8 @@ static InstructionPrinter *instrPrinter_lh = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
+    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
 );
@@ -761,8 +761,8 @@ static InstructionPrinter *instrPrinter_lhu = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
+    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
 );
@@ -779,8 +779,8 @@ static InstructionPrinter *instrPrinter_lb = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
+    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
 );
@@ -797,8 +797,8 @@ static InstructionPrinter *instrPrinter_lbu = new InstructionPrinter(
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
+    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     return ret_strs.str();
   }
 );

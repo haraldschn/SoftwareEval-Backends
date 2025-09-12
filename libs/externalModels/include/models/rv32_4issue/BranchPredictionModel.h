@@ -18,6 +18,7 @@
 #define RV32_4ISSUE_DYNAMIC_BRANCH_PREDICT_MODEL_H
 
 #include <stdbool.h>
+#include <array>
 #include <stack>
 #include <cstdint>
 

@@ -30,9 +30,9 @@
 #include "models/common/StandardRegisterModel.h"
 #include "models/rv32_4issue/BranchPredictionModel.h"
 #include "models/rv32_4issue/ICacheModel.h"
+#include "models/rv32_4issue/DCacheModel.h"
 #include "models/rv32_4issue/DividerUnsignedModel.h"
 #include "models/rv32_4issue/DividerModel.h"
-#include "models/rv32_4issue/DCacheModel.h"
 
 namespace RV32_4ISSUE{
 
@@ -43,10 +43,14 @@ class RV32_4ISSUE_PerformanceModel : public PerformanceModel
 public:
 
   RV32_4ISSUE_PerformanceModel() : PerformanceModel("RV32_4ISSUE", RV32_4ISSUE_SchedulingFunctionSet)
-    ,IF_stage(4,0)
+    ,IF_stage(16,0)
+    ,PC_substage(4,0)
+    ,IF_substage_0(4,0)
+    ,IF_substage_1(4,0)
+    ,IF_substage_2(4,0)
     ,DEC_stage(4,0)
     ,RN_stage(5,0)
-    ,OoO_stage(56,0)
+    ,OoO_stage(64,0)
     ,IS_substage_alu(24,0)
     ,LD_substage_alu(3,0)
     ,EX_stage_alu(9,0)
@@ -68,19 +72,24 @@ public:
     ,regModel(this)
     ,dynBranchPredModel(this)
     ,iCacheModel(this)
+    ,dCacheModel(this)
     ,divider_u(this)
     ,divider(this)
-    ,dCacheModel(this)
   {};
 
   // Entrance-point "timing variable" (only used for info-stream)
   uint64_t entrancePoint = 0;
 
   // Single-Element Timing Variables
-  uint64_t EX_substage_csr_div = 0;
+  uint64_t EX_substage_csr = 0;
+  uint64_t EX_substage_div = 0;
 
   // Multi-Element Timing Variables
   MultiElementTimingVariable IF_stage;
+  MultiElementTimingVariable PC_substage;
+  MultiElementTimingVariable IF_substage_0;
+  MultiElementTimingVariable IF_substage_1;
+  MultiElementTimingVariable IF_substage_2;
   MultiElementTimingVariable DEC_stage;
   MultiElementTimingVariable RN_stage;
   MultiElementTimingVariable OoO_stage;
@@ -107,9 +116,9 @@ public:
   common::StandardRegisterModel regModel;
   rv32_4issue::BranchPredictionModel dynBranchPredModel;
   rv32_4issue::ICacheModel iCacheModel;
+  rv32_4issue::DCacheModel dCacheModel;
   rv32_4issue::DividerUnsignedModel divider_u;
   rv32_4issue::DividerModel divider;
-  rv32_4issue::DCacheModel dCacheModel;
 
   virtual void connectChannel(Channel*);
   virtual uint64_t getCycleCount(void);

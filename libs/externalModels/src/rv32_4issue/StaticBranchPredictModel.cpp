@@ -61,13 +61,13 @@ uint64_t StaticBranchPredictModel::getPc_mp(void)
   }
   else
   {
-    // Always predict branch-taken
+    // Always predict branch-not-taken
     if(pc_ptr[getInstrIndex()] == branchTarget)
     {
       // Set info print for misprediction
-      mispredicted_info = false;
-      pc_info = pc_p+1;
-      return pc_p+1;
+      mispredicted_info = true;
+      pc_info = pc_np;
+      return pc_np;
     }
     else
     {
@@ -87,13 +87,13 @@ uint64_t StaticBranchPredictModel::getPc_pt(void)
   }
   else
   {
-    // Always predict branch-taken
+    // Always predict branch-not-taken
     if(pc_ptr[getInstrIndex()] == branchTarget)
     {
       // Set info print for misprediction
-      mispredicted_info = false;
-      pc_info = pc_p+1;
-      return pc_p+1;
+      mispredicted_info = true;
+      pc_info = pc_np;
+      return pc_np;
     }
     else
     {

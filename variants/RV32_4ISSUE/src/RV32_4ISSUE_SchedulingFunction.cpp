@@ -35,24 +35,47 @@ static SchedulingFunction *schedulingFunction_add = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -65,11 +88,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -102,7 +125,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -120,24 +143,47 @@ static SchedulingFunction *schedulingFunction_sub = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -150,11 +196,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -187,7 +233,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -205,24 +251,47 @@ static SchedulingFunction *schedulingFunction_xor = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -235,11 +304,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -272,7 +341,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -290,24 +359,47 @@ static SchedulingFunction *schedulingFunction_or = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -320,11 +412,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -357,7 +449,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -375,24 +467,47 @@ static SchedulingFunction *schedulingFunction_and = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -405,11 +520,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -442,7 +557,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -460,24 +575,47 @@ static SchedulingFunction *schedulingFunction_slt = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -490,11 +628,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -527,7 +665,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -545,24 +683,47 @@ static SchedulingFunction *schedulingFunction_sltu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -575,11 +736,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -612,7 +773,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -630,24 +791,47 @@ static SchedulingFunction *schedulingFunction_sll = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -660,11 +844,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -697,7 +881,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -715,24 +899,47 @@ static SchedulingFunction *schedulingFunction_srl = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -745,11 +952,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -782,7 +989,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -800,24 +1007,47 @@ static SchedulingFunction *schedulingFunction_sra = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -830,11 +1060,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -867,7 +1097,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -885,24 +1115,47 @@ static SchedulingFunction *schedulingFunction_addi = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -915,11 +1168,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -949,7 +1202,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -967,24 +1220,47 @@ static SchedulingFunction *schedulingFunction_xori = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -997,11 +1273,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1031,7 +1307,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1049,24 +1325,47 @@ static SchedulingFunction *schedulingFunction_ori = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1079,11 +1378,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1113,7 +1412,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1131,24 +1430,47 @@ static SchedulingFunction *schedulingFunction_andi = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1161,11 +1483,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1195,7 +1517,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1213,24 +1535,47 @@ static SchedulingFunction *schedulingFunction_slti = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1243,11 +1588,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1277,7 +1622,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1295,24 +1640,47 @@ static SchedulingFunction *schedulingFunction_sltiu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1325,11 +1693,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1359,7 +1727,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1377,24 +1745,47 @@ static SchedulingFunction *schedulingFunction_slli = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1407,11 +1798,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1441,7 +1832,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1459,24 +1850,47 @@ static SchedulingFunction *schedulingFunction_srli = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1489,11 +1903,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1523,7 +1937,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1541,24 +1955,47 @@ static SchedulingFunction *schedulingFunction_srai = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1571,11 +2008,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1605,7 +2042,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1623,24 +2060,47 @@ static SchedulingFunction *schedulingFunction_auipc = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1653,11 +2113,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1684,7 +2144,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1702,24 +2162,47 @@ static SchedulingFunction *schedulingFunction_lui = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1732,11 +2215,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1763,7 +2246,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1781,24 +2264,47 @@ static SchedulingFunction *schedulingFunction_mul = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1811,11 +2317,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1869,7 +2375,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1887,24 +2393,47 @@ static SchedulingFunction *schedulingFunction_mulh = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -1917,11 +2446,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -1975,7 +2504,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -1993,24 +2522,47 @@ static SchedulingFunction *schedulingFunction_mulhu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2023,11 +2575,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2081,7 +2633,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2099,24 +2651,47 @@ static SchedulingFunction *schedulingFunction_mulhsu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2129,11 +2704,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2187,7 +2762,7 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2205,24 +2780,47 @@ static SchedulingFunction *schedulingFunction_div = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2235,11 +2833,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2255,7 +2853,7 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXb()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_div});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // DIV
 uint64_t n_DIV;
@@ -2265,14 +2863,14 @@ perfModel->regModel.setXd(n_DIV);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_DIV, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_div = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2290,24 +2888,47 @@ static SchedulingFunction *schedulingFunction_rem = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2320,11 +2941,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2340,7 +2961,7 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXb()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_div});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // DIV
 uint64_t n_DIV;
@@ -2350,14 +2971,14 @@ perfModel->regModel.setXd(n_DIV);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_DIV, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_div = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2375,24 +2996,47 @@ static SchedulingFunction *schedulingFunction_divu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2405,11 +3049,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2425,7 +3069,7 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXb()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_div});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // DIVU
 uint64_t n_DIVU;
@@ -2435,14 +3079,14 @@ perfModel->regModel.setXd(n_DIVU);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_DIVU, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_div = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2460,24 +3104,47 @@ static SchedulingFunction *schedulingFunction_remu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2490,11 +3157,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2510,7 +3177,7 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXb()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_div});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // DIVU
 uint64_t n_DIVU;
@@ -2520,14 +3187,14 @@ perfModel->regModel.setXd(n_DIVU);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_DIVU, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_div = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2545,24 +3212,47 @@ static SchedulingFunction *schedulingFunction_csrrw = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2575,11 +3265,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2592,7 +3282,7 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXa()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // CSR
 uint64_t n_CSR;
@@ -2602,14 +3292,14 @@ perfModel->regModel.setXd(n_CSR);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_CSR, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_csr = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2627,24 +3317,47 @@ static SchedulingFunction *schedulingFunction_csrrs = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2657,11 +3370,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2674,7 +3387,7 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXa()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // CSR
 uint64_t n_CSR;
@@ -2684,14 +3397,14 @@ perfModel->regModel.setXd(n_CSR);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_CSR, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_csr = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2709,24 +3422,47 @@ static SchedulingFunction *schedulingFunction_csrrc = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2739,11 +3475,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2756,7 +3492,7 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_IS_substage_alu, perfModel->regModel.getXa()});
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, n_uA_OF_A_alu, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // CSR
 uint64_t n_CSR;
@@ -2766,14 +3502,14 @@ perfModel->regModel.setXd(n_CSR);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_CSR, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_csr = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2791,24 +3527,47 @@ static SchedulingFunction *schedulingFunction_csrrwi = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2821,11 +3580,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2835,7 +3594,7 @@ uint64_t n_OperandLookup;
 n_OperandLookup = n_IS_substage_alu + 1;
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // CSR
 uint64_t n_CSR;
@@ -2845,14 +3604,14 @@ perfModel->regModel.setXd(n_CSR);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_CSR, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_csr = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2870,24 +3629,47 @@ static SchedulingFunction *schedulingFunction_csrrsi = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2900,11 +3682,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2914,7 +3696,7 @@ uint64_t n_OperandLookup;
 n_OperandLookup = n_IS_substage_alu + 1;
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // CSR
 uint64_t n_CSR;
@@ -2924,14 +3706,14 @@ perfModel->regModel.setXd(n_CSR);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_CSR, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_csr = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -2949,24 +3731,47 @@ static SchedulingFunction *schedulingFunction_csrrci = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -2979,11 +3784,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -2993,7 +3798,7 @@ uint64_t n_OperandLookup;
 n_OperandLookup = n_IS_substage_alu + 1;
 // LD_substage_alu
 uint64_t n_LD_substage_alu;
-n_LD_substage_alu = std::max({n_OperandLookup, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr_div});
+n_LD_substage_alu = std::max({n_OperandLookup, perfModel->LD_substage_alu.get(1), perfModel->EX_stage_alu.get(9), perfModel->EX_substage_csr});
 perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // CSR
 uint64_t n_CSR;
@@ -3003,14 +3808,14 @@ perfModel->regModel.setXd(n_CSR);
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_CSR, perfModel->EX_stage_alu.get(1)});
 perfModel->EX_stage_alu.set(n_EX_stage_alu);
-perfModel->EX_substage_csr_div = n_EX_stage_alu;
+perfModel->EX_substage_csr = n_EX_stage_alu;
 // OoO_stage
 uint64_t n_OoO_stage;
 n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->COM_stage.get(8)});
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -3028,24 +3833,47 @@ static SchedulingFunction *schedulingFunction_sb = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3058,11 +3886,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_store.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_store.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_store
 uint64_t n_IS_substage_store;
 n_IS_substage_store = std::max({n_Issue, perfModel->IS_substage_store.get(1), perfModel->LD_substage_store.get(2)});
@@ -3083,6 +3911,7 @@ perfModel->LD_substage_store.set(n_LD_substage_store);
 // STORE
 uint64_t n_STORE;
 n_STORE = n_LD_substage_store + 1;
+perfModel->dCacheModel.setDc_in(n_STORE);
 // EX_stage_store
 uint64_t n_EX_stage_store;
 n_EX_stage_store = std::max({n_STORE, perfModel->EX_stage_store.get(1), perfModel->EX_substage_store.get(1)});
@@ -3094,13 +3923,13 @@ n_OoO_stage = std::max({n_EX_stage_store, perfModel->OoO_stage.get(1), perfModel
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_W
-uint64_t n_DPort_W;
-n_DPort_W = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+// DCache_Store
+uint64_t n_DCache_Store;
+n_DCache_Store = n_OoO_stage + 3;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_W, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, n_DCache_Store, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3115,24 +3944,47 @@ static SchedulingFunction *schedulingFunction_sh = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3145,11 +3997,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_store.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_store.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_store
 uint64_t n_IS_substage_store;
 n_IS_substage_store = std::max({n_Issue, perfModel->IS_substage_store.get(1), perfModel->LD_substage_store.get(2)});
@@ -3170,6 +4022,7 @@ perfModel->LD_substage_store.set(n_LD_substage_store);
 // STORE
 uint64_t n_STORE;
 n_STORE = n_LD_substage_store + 1;
+perfModel->dCacheModel.setDc_in(n_STORE);
 // EX_stage_store
 uint64_t n_EX_stage_store;
 n_EX_stage_store = std::max({n_STORE, perfModel->EX_stage_store.get(1), perfModel->EX_substage_store.get(1)});
@@ -3181,13 +4034,13 @@ n_OoO_stage = std::max({n_EX_stage_store, perfModel->OoO_stage.get(1), perfModel
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_W
-uint64_t n_DPort_W;
-n_DPort_W = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+// DCache_Store
+uint64_t n_DCache_Store;
+n_DCache_Store = n_OoO_stage + 3;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_W, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, n_DCache_Store, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3202,24 +4055,47 @@ static SchedulingFunction *schedulingFunction_sw = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3232,11 +4108,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_store.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_store.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_store
 uint64_t n_IS_substage_store;
 n_IS_substage_store = std::max({n_Issue, perfModel->IS_substage_store.get(1), perfModel->LD_substage_store.get(2)});
@@ -3257,6 +4133,7 @@ perfModel->LD_substage_store.set(n_LD_substage_store);
 // STORE
 uint64_t n_STORE;
 n_STORE = n_LD_substage_store + 1;
+perfModel->dCacheModel.setDc_in(n_STORE);
 // EX_stage_store
 uint64_t n_EX_stage_store;
 n_EX_stage_store = std::max({n_STORE, perfModel->EX_stage_store.get(1), perfModel->EX_substage_store.get(1)});
@@ -3268,13 +4145,13 @@ n_OoO_stage = std::max({n_EX_stage_store, perfModel->OoO_stage.get(1), perfModel
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_W
-uint64_t n_DPort_W;
-n_DPort_W = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+// DCache_Store
+uint64_t n_DCache_Store;
+n_DCache_Store = n_OoO_stage + 3;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_W, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, n_DCache_Store, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3289,24 +4166,47 @@ static SchedulingFunction *schedulingFunction_lw = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3319,11 +4219,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_agu.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_agu.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_agu
 uint64_t n_IS_substage_agu;
 n_IS_substage_agu = std::max({n_Issue, perfModel->IS_substage_agu.get(1), perfModel->LD_substage_agu.get(2)});
@@ -3360,13 +4260,10 @@ n_OoO_stage = std::max({n_EX_stage_agu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_R
-uint64_t n_DPort_R;
-n_DPort_R = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_R, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3381,24 +4278,47 @@ static SchedulingFunction *schedulingFunction_lh = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3411,11 +4331,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_agu.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_agu.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_agu
 uint64_t n_IS_substage_agu;
 n_IS_substage_agu = std::max({n_Issue, perfModel->IS_substage_agu.get(1), perfModel->LD_substage_agu.get(2)});
@@ -3452,13 +4372,10 @@ n_OoO_stage = std::max({n_EX_stage_agu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_R
-uint64_t n_DPort_R;
-n_DPort_R = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_R, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3473,24 +4390,47 @@ static SchedulingFunction *schedulingFunction_lhu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3503,11 +4443,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_agu.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_agu.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_agu
 uint64_t n_IS_substage_agu;
 n_IS_substage_agu = std::max({n_Issue, perfModel->IS_substage_agu.get(1), perfModel->LD_substage_agu.get(2)});
@@ -3544,13 +4484,10 @@ n_OoO_stage = std::max({n_EX_stage_agu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_R
-uint64_t n_DPort_R;
-n_DPort_R = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_R, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3565,24 +4502,47 @@ static SchedulingFunction *schedulingFunction_lb = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3595,11 +4555,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_agu.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_agu.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_agu
 uint64_t n_IS_substage_agu;
 n_IS_substage_agu = std::max({n_Issue, perfModel->IS_substage_agu.get(1), perfModel->LD_substage_agu.get(2)});
@@ -3636,13 +4596,10 @@ n_OoO_stage = std::max({n_EX_stage_agu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_R
-uint64_t n_DPort_R;
-n_DPort_R = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_R, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3657,24 +4614,47 @@ static SchedulingFunction *schedulingFunction_lbu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
-// uA_PcPredict
-uint64_t n_uA_PcPredict;
-n_uA_PcPredict = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_pt()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_PcPredict, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3687,11 +4667,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_agu.get(16)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_agu.get(16)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_agu
 uint64_t n_IS_substage_agu;
 n_IS_substage_agu = std::max({n_Issue, perfModel->IS_substage_agu.get(1), perfModel->LD_substage_agu.get(2)});
@@ -3728,13 +4708,10 @@ n_OoO_stage = std::max({n_EX_stage_agu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
-// DPort_R
-uint64_t n_DPort_R;
-n_DPort_R = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
 // COM_stage
 uint64_t n_COM_stage;
-n_COM_stage = std::max({n_Commit, n_DPort_R, perfModel->COM_stage.get(1)});
+n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
 perfModel->COM_stage.set(n_COM_stage);
 
   // Dump Entrance point for info print (tracing)
@@ -3749,25 +4726,48 @@ static SchedulingFunction *schedulingFunction_beq = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3780,11 +4780,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -3805,7 +4805,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -3817,7 +4816,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -3835,25 +4835,48 @@ static SchedulingFunction *schedulingFunction_bne = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3866,11 +4889,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -3891,7 +4914,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -3903,7 +4925,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -3921,25 +4944,48 @@ static SchedulingFunction *schedulingFunction_blt = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -3952,11 +4998,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -3977,7 +5023,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -3989,7 +5034,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -4007,25 +5053,48 @@ static SchedulingFunction *schedulingFunction_bge = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -4038,11 +5107,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -4063,7 +5132,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -4075,7 +5143,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -4093,25 +5162,48 @@ static SchedulingFunction *schedulingFunction_bltu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -4124,11 +5216,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -4149,7 +5241,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -4161,7 +5252,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -4179,25 +5271,48 @@ static SchedulingFunction *schedulingFunction_bgeu = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -4210,11 +5325,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -4235,7 +5350,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -4247,7 +5361,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -4265,25 +5380,48 @@ static SchedulingFunction *schedulingFunction_jal = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p_j(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p_j(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -4296,11 +5434,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -4316,7 +5454,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
 perfModel->regModel.setXd(n_ALU);
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -4328,7 +5465,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -4346,25 +5484,48 @@ static SchedulingFunction *schedulingFunction_jalr = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
-// uA_PcCorrect
-uint64_t n_uA_PcCorrect;
-n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // PCGen
 uint64_t n_PCGen;
 n_PCGen = n_Enter + 1;
-perfModel->dynBranchPredModel.setPc_p_jr(n_PCGen);
+// uA_PcCorrect
+uint64_t n_uA_PcCorrect;
+n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1), perfModel->IF_substage_2.get(4)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
+// IScan
+uint64_t n_IScan;
+n_IScan = n_IF_substage_1 + 1;
+perfModel->dynBranchPredModel.setPc_p_jr(n_IScan);
 // IF_stage
 uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_PCGen, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1), perfModel->DEC_stage.get(4)});
+n_IF_stage = std::max({n_IScan, perfModel->IF_stage.get(1), perfModel->IF_substage_2.get(1), perfModel->DEC_stage.get(4)});
 perfModel->IF_stage.set(n_IF_stage);
+perfModel->IF_substage_2.set(n_IF_stage);
 // Decoder
 uint64_t n_Decoder;
 n_Decoder = n_IF_stage + 1;
@@ -4377,11 +5538,11 @@ uint64_t n_Rename;
 n_Rename = n_DEC_stage + 1;
 // RN_stage
 uint64_t n_RN_stage;
-n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(56), perfModel->IS_substage_alu.get(24)});
+n_RN_stage = std::max({n_Rename, perfModel->RN_stage.get(1), perfModel->OoO_stage.get(64), perfModel->IS_substage_alu.get(24)});
 perfModel->RN_stage.set(n_RN_stage);
 // Issue
 uint64_t n_Issue;
-n_Issue = n_RN_stage + 1;
+n_Issue = n_RN_stage + 2;
 // IS_substage_alu
 uint64_t n_IS_substage_alu;
 n_IS_substage_alu = std::max({n_Issue, perfModel->IS_substage_alu.get(1), perfModel->LD_substage_alu.get(3)});
@@ -4400,7 +5561,6 @@ perfModel->LD_substage_alu.set(n_LD_substage_alu);
 uint64_t n_ALU;
 n_ALU = n_LD_substage_alu + 1;
 perfModel->regModel.setXd(n_ALU);
-perfModel->dynBranchPredModel.setPc_c(n_ALU);
 // EX_stage_alu
 uint64_t n_EX_stage_alu;
 n_EX_stage_alu = std::max({n_ALU, perfModel->EX_stage_alu.get(1), perfModel->EX_substage_branch.get(1)});
@@ -4412,7 +5572,8 @@ n_OoO_stage = std::max({n_EX_stage_alu, perfModel->OoO_stage.get(1), perfModel->
 perfModel->OoO_stage.set(n_OoO_stage);
 // Commit
 uint64_t n_Commit;
-n_Commit = n_OoO_stage + 1;
+n_Commit = n_OoO_stage + 2;
+perfModel->dynBranchPredModel.setPc_c(n_Commit);
 // COM_stage
 uint64_t n_COM_stage;
 n_COM_stage = std::max({n_Commit, perfModel->COM_stage.get(1)});
@@ -4430,21 +5591,39 @@ static SchedulingFunction *schedulingFunction__def = new SchedulingFunction(
   [](PerformanceModel* perfModel_){
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
-uint64_t n_Enter = perfModel->IF_stage.get(4);
+uint64_t n_Enter;
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
+// PCGen
+uint64_t n_PCGen;
+n_PCGen = n_Enter + 1;
 // uA_PcCorrect
 uint64_t n_uA_PcCorrect;
 n_uA_PcCorrect = std::max({n_Enter, perfModel->dynBranchPredModel.getPc_mp()});
 // uA_CacheBlock
 uint64_t n_uA_CacheBlock;
 n_uA_CacheBlock = std::max({n_Enter, perfModel->iCacheModel.getIc_out()});
-// IPort_R
-uint64_t n_IPort_R;
-n_IPort_R = n_Enter + perfModel->iCacheModel.getDelay();
-perfModel->iCacheModel.setIc_in(n_IPort_R);
-// IF_stage
-uint64_t n_IF_stage;
-n_IF_stage = std::max({n_uA_PcCorrect, n_uA_CacheBlock, n_IPort_R, perfModel->IF_stage.get(1)});
-perfModel->IF_stage.set(n_IF_stage);
+// PC_substage
+uint64_t n_PC_substage;
+n_PC_substage = std::max({n_PCGen, n_uA_PcCorrect, n_uA_CacheBlock, perfModel->PC_substage.get(1), perfModel->IF_substage_0.get(4)});
+perfModel->PC_substage.set(n_PC_substage);
+// ICacheCtrl
+uint64_t n_ICacheCtrl;
+n_ICacheCtrl = n_PC_substage + 1;
+// IF_substage_0
+uint64_t n_IF_substage_0;
+n_IF_substage_0 = std::max({n_ICacheCtrl, perfModel->IF_substage_0.get(1), perfModel->IF_substage_1.get(4)});
+perfModel->IF_substage_0.set(n_IF_substage_0);
+// ICache
+uint64_t n_ICache;
+n_ICache = n_IF_substage_0 + perfModel->iCacheModel.getDelay();
+perfModel->iCacheModel.setIc_in(n_ICache);
+// uA_PcPredict
+uint64_t n_uA_PcPredict;
+n_uA_PcPredict = std::max({n_IF_substage_0, perfModel->dynBranchPredModel.getPc_pt()});
+// IF_substage_1
+uint64_t n_IF_substage_1;
+n_IF_substage_1 = std::max({n_ICache, n_uA_PcPredict, perfModel->IF_substage_1.get(1)});
+perfModel->IF_substage_1.set(n_IF_substage_1);
 
   // Dump Entrance point for info print (tracing)
   perfModel->entrancePoint = n_Enter;

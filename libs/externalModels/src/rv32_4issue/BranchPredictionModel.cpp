@@ -50,7 +50,7 @@ void PredictFsm::update(bool taken_)
   case STRONG_TAKEN : state = taken_ ? STRONG_TAKEN : WEAK_TAKEN;
     break;
 
-  default: state = RESET_STATE;
+  default: state = taken_ ? WEAK_TAKEN : WEAK_NOT_TAKEN;
   }
 }
 
@@ -59,8 +59,8 @@ bool BranchHistoryTable::getPrediction(uint64_t pc_, uint64_t imm_)
   // TODO: Different behavior for unaligned!
   if (!tab[getIndex(pc_)].valid)
   {
-    // Predict taken if imm is negative
-    return (int64_t(imm_) < 0);
+    // Predict not-taken if bht entry not valid
+    return false;
   }
   return tab[getIndex(pc_)].state.getPrediction();
 }
@@ -69,6 +69,7 @@ void BranchHistoryTable::update(uint64_t pc_, bool taken_)
 {  
   tab[getIndex(pc_)].valid = true;
   tab[getIndex(pc_)].state.update(taken_);
+  //printf("%lx: index BHT %lx\n", pc_, getIndex(pc_));
 }
 
 void ReturnAddressStack::push(uint64_t ra_)
@@ -111,6 +112,7 @@ void BranchTargetBuffer::update(uint64_t pc_, uint64_t taddr_)
 {
   tab[getIndex(pc_)].valid = true;
   tab[getIndex(pc_)].addr = taddr_;
+  //printf("%lx: index BTB %lx\n", pc_, getIndex(pc_));
 }
 
 

@@ -35,9 +35,15 @@ struct DCacheEntry {
 class DCacheModel : public ResourceModel {
    public:
     // TODO: Check if delays are matching observations!
-    DCacheModel(PerformanceModel* parent_) : ResourceModel("DCacheModel", parent_), CACHE_DELAY(1), MEMORY_DELAY(8), NOT_CACHABLE_DELAY(8) {};
+    DCacheModel(PerformanceModel* parent_) : ResourceModel("DCacheModel", parent_), CACHE_DELAY(1), MEMORY_DELAY(12), NOT_CACHABLE_DELAY(12) {};
     virtual int getDelay(void);
     
+    void setDc_in(uint64_t c_) { 
+        uint64_t addr = addr_ptr[getInstrIndex()];
+        inCache(addr);
+    };
+    uint64_t getDc_out(void) { return 0;};
+
     //void storeCache(void);
 
     // Tracing API

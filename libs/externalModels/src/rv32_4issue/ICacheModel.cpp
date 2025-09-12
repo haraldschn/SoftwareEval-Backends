@@ -29,15 +29,17 @@ int ICacheModel::getDelay(void) {
 
     isMiss = !inCache(pc);
 
-    // TODO: Move out of this external model of instruction cache
+    // TODO: Unaligned fetches have additional delay
     int fetch_delay = 0;
-    if((pc & 0x000000000000000F) == 0) {
+    if((pc - pc_prev) != 4) {
         fetch_delay = 1;
     }
 
     if (!cachable(pc) | isMiss) {
         return MEMORY_DELAY + fetch_delay;
     }
+
+    pc_prev = pc;
     return CACHE_DELAY + fetch_delay;
 }
 
@@ -45,12 +47,15 @@ bool ICacheModel::inCache(uint64_t pc_) {
     uint64_t tag = (pc_ & 0x00FFFFFFFFFF0000) >> 16;   // pc_[55:16]
     uint64_t index = (pc_ & 0x000000000000FFF0) >> 4;  // pc_[15:4]
 
-    // Prefetch next instructions
-    updateCache(tag, (index + 1) % 4096);
-    
+    // Prefetch first instructions
     if(pc_ == 0x80000000) {
-        // Preload first instruction
-        updateCache(tag, index);
+        // Preload first 16 instructions (4 byte aligned)
+        for (size_t i = 0; i < 15; i+=1)
+        {
+            tag = ((pc_+(i*4)) & 0x00FFFFFFFFFF0000) >> 16;   // pc_[55:16]
+            index = ((pc_+(i*4)) & 0x000000000000FFF0) >> 4;  // pc_[15:4]
+            updateCache(tag, index);
+        }
         return true;
     }
 
@@ -61,8 +66,13 @@ bool ICacheModel::inCache(uint64_t pc_) {
         }
     }
 
-    // Cache miss
-    updateCache(tag, index);
+    // Cache miss + Preload next 16 instructions (4 byte aligned)
+    for (size_t i = 0; i < 15; i+=1)
+    {
+        tag = ((pc_+(i*4)) & 0x00FFFFFFFFFF0000) >> 16;   // pc_[55:16]
+        index = ((pc_+(i*4)) & 0x000000000000FFF0) >> 4;  // pc_[15:4]
+        updateCache(tag, index);
+    }
     return false;
 }
 
