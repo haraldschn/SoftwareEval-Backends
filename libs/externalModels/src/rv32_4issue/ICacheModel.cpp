@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Chair of EDA, Technical University of Munich
+ * Copyright 2025 Chair of EDA, Technical University of Munich
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,18 +29,12 @@ int ICacheModel::getDelay(void) {
 
     isMiss = !inCache(pc);
 
-    // TODO: Unaligned fetches have additional delay
-    int fetch_delay = 0;
-    if((pc - pc_prev) != 4) {
-        fetch_delay = 1;
-    }
 
     if (!cachable(pc) | isMiss) {
-        return MEMORY_DELAY + fetch_delay;
+        return MEMORY_DELAY;
     }
 
-    pc_prev = pc;
-    return CACHE_DELAY + fetch_delay;
+    return CACHE_DELAY;
 }
 
 bool ICacheModel::inCache(uint64_t pc_) {

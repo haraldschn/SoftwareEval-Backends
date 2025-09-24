@@ -59,6 +59,9 @@ bool DCacheModel::inCache(uint64_t addr_) {
 
     // Cache miss
     updateCache(tag, index);
+    updateCache(tag, (index+1)%4096);
+    updateCache(tag, (index+2)%4096);
+    updateCache(tag, (index+3)%4096);
     return false;
 }
 

@@ -27,10 +27,12 @@
 #include "PerformanceModel.h"
 #include "Channel.h"
 
-#include "models/common/StandardRegisterModel.h"
+#include "models/rv32_4issue/RegisterModel.h"
 #include "models/rv32_4issue/BranchPredictionModel.h"
 #include "models/rv32_4issue/ICacheModel.h"
 #include "models/rv32_4issue/DCacheModel.h"
+#include "models/rv32_4issue/Scheduler.h"
+#include "models/rv32_4issue/FetchAligner.h"
 #include "models/rv32_4issue/DividerUnsignedModel.h"
 #include "models/rv32_4issue/DividerModel.h"
 
@@ -50,29 +52,21 @@ public:
     ,IF_substage_2(4,0)
     ,DEC_stage(4,0)
     ,RN_stage(5,0)
-    ,OoO_stage(64,0)
-    ,IS_substage_alu(24,0)
-    ,LD_substage_alu(3,0)
-    ,EX_stage_alu(9,0)
-    ,EX_substage_alu(3,0)
-    ,EX_substage_mul_1(2,0)
-    ,EX_substage_mul_2(2,0)
-    ,EX_substage_mul_3(2,0)
-    ,EX_substage_mul_4(2,0)
-    ,EX_substage_branch(2,0)
+    ,IS_substage_alu_OoO(24,0)
+    ,LD_substage_alu_OoO(24,0)
+    ,EX_stage_alu_OoO(24,0)
+    ,WFC_stage_alu(64,0)
     ,IS_substage_agu(16,0)
-    ,LD_substage_agu(2,0)
+    ,LD_substage_agu(16,0)
     ,EX_stage_agu(2,0)
-    ,EX_substage_agu(2,0)
-    ,IS_substage_store(16,0)
-    ,LD_substage_store(2,0)
-    ,EX_stage_store(2,0)
-    ,EX_substage_store(2,0)
-    ,COM_stage(8,0)
+    ,WFC_stage_agu(16,0)
+    ,COM_stage(4,0)
     ,regModel(this)
     ,dynBranchPredModel(this)
     ,iCacheModel(this)
     ,dCacheModel(this)
+    ,scheduler(this)
+    ,fetchAligner(this)
     ,divider_u(this)
     ,divider(this)
   {};
@@ -80,9 +74,6 @@ public:
   // Entrance-point "timing variable" (only used for info-stream)
   uint64_t entrancePoint = 0;
 
-  // Single-Element Timing Variables
-  uint64_t EX_substage_csr = 0;
-  uint64_t EX_substage_div = 0;
 
   // Multi-Element Timing Variables
   MultiElementTimingVariable IF_stage;
@@ -92,31 +83,23 @@ public:
   MultiElementTimingVariable IF_substage_2;
   MultiElementTimingVariable DEC_stage;
   MultiElementTimingVariable RN_stage;
-  MultiElementTimingVariable OoO_stage;
-  MultiElementTimingVariable IS_substage_alu;
-  MultiElementTimingVariable LD_substage_alu;
-  MultiElementTimingVariable EX_stage_alu;
-  MultiElementTimingVariable EX_substage_alu;
-  MultiElementTimingVariable EX_substage_mul_1;
-  MultiElementTimingVariable EX_substage_mul_2;
-  MultiElementTimingVariable EX_substage_mul_3;
-  MultiElementTimingVariable EX_substage_mul_4;
-  MultiElementTimingVariable EX_substage_branch;
+  MultiElementTimingVariable IS_substage_alu_OoO;
+  MultiElementTimingVariable LD_substage_alu_OoO;
+  MultiElementTimingVariable EX_stage_alu_OoO;
+  MultiElementTimingVariable WFC_stage_alu;
   MultiElementTimingVariable IS_substage_agu;
   MultiElementTimingVariable LD_substage_agu;
   MultiElementTimingVariable EX_stage_agu;
-  MultiElementTimingVariable EX_substage_agu;
-  MultiElementTimingVariable IS_substage_store;
-  MultiElementTimingVariable LD_substage_store;
-  MultiElementTimingVariable EX_stage_store;
-  MultiElementTimingVariable EX_substage_store;
+  MultiElementTimingVariable WFC_stage_agu;
   MultiElementTimingVariable COM_stage;
 
   // External Resource Models
-  common::StandardRegisterModel regModel;
+  rv32_4issue::RegisterModel regModel;
   rv32_4issue::BranchPredictionModel dynBranchPredModel;
   rv32_4issue::ICacheModel iCacheModel;
   rv32_4issue::DCacheModel dCacheModel;
+  rv32_4issue::Scheduler scheduler;
+  rv32_4issue::FetchAligner fetchAligner;
   rv32_4issue::DividerUnsignedModel divider_u;
   rv32_4issue::DividerModel divider;
 
