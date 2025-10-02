@@ -32,8 +32,8 @@
 #include "models/rv32_4issue/BranchPredictionModel.h"
 #include "models/rv32_4issue/ICacheModel.h"
 #include "models/rv32_4issue/DCacheModel.h"
-#include "models/rv32_4issue/Scheduler.h"
 #include "models/rv32_4issue/FetchAligner.h"
+#include "models/rv32_4issue/Scheduler.h"
 #include "models/rv32_4issue/DividerUnsignedModel.h"
 #include "models/rv32_4issue/DividerModel.h"
 
@@ -55,11 +55,14 @@ void RV32_4ISSUE_PerformanceModel::connectChannel(Channel* channel_)
 
   iCacheModel.pc_ptr = channel->pc;
 
+  dCacheModel.pc_ptr = channel->pc;
   dCacheModel.addr_ptr = channel->addr;
 
-  scheduler.pc_ptr = channel->pc;
-
   fetchAligner.pc_ptr = channel->pc;
+
+  schedModel.pc_ptr = channel->pc;
+  schedModel.rs1_ptr = channel->rs1;
+  schedModel.rd_ptr = channel->rd;
 
   divider_u.rs2_data_ptr = channel->rs2_data;
 

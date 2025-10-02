@@ -31,8 +31,8 @@
 #include "models/rv32_4issue/BranchPredictionModel.h"
 #include "models/rv32_4issue/ICacheModel.h"
 #include "models/rv32_4issue/DCacheModel.h"
-#include "models/rv32_4issue/Scheduler.h"
 #include "models/rv32_4issue/FetchAligner.h"
+#include "models/rv32_4issue/Scheduler.h"
 #include "models/rv32_4issue/DividerUnsignedModel.h"
 #include "models/rv32_4issue/DividerModel.h"
 
@@ -45,28 +45,28 @@ class RV32_4ISSUE_PerformanceModel : public PerformanceModel
 public:
 
   RV32_4ISSUE_PerformanceModel() : PerformanceModel("RV32_4ISSUE", RV32_4ISSUE_SchedulingFunctionSet)
-    ,IF_stage(16,0)
+    ,IF_stage(20,0)
     ,PC_substage(4,0)
     ,IF_substage_0(4,0)
     ,IF_substage_1(4,0)
     ,IF_substage_2(4,0)
     ,DEC_stage(4,0)
-    ,RN_stage(5,0)
+    ,RN_stage(4,0)
     ,IS_substage_alu_OoO(24,0)
     ,LD_substage_alu_OoO(24,0)
     ,EX_stage_alu_OoO(24,0)
     ,WFC_stage_alu(64,0)
     ,IS_substage_agu(16,0)
-    ,LD_substage_agu(16,0)
+    ,LD_substage_agu(2,0)
     ,EX_stage_agu(2,0)
-    ,WFC_stage_agu(16,0)
+    ,WFC_stage_agu(64,0)
     ,COM_stage(4,0)
     ,regModel(this)
     ,dynBranchPredModel(this)
     ,iCacheModel(this)
     ,dCacheModel(this)
-    ,scheduler(this)
     ,fetchAligner(this)
+    ,schedModel(this)
     ,divider_u(this)
     ,divider(this)
   {};
@@ -98,8 +98,8 @@ public:
   rv32_4issue::BranchPredictionModel dynBranchPredModel;
   rv32_4issue::ICacheModel iCacheModel;
   rv32_4issue::DCacheModel dCacheModel;
-  rv32_4issue::Scheduler scheduler;
   rv32_4issue::FetchAligner fetchAligner;
+  rv32_4issue::Scheduler schedModel;
   rv32_4issue::DividerUnsignedModel divider_u;
   rv32_4issue::DividerModel divider;
 

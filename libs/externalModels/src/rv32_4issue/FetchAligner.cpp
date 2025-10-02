@@ -22,22 +22,39 @@
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue{
+namespace rv32_4issue {
 
-int FetchAligner::getDelay(void)
-{
+// int FetchAligner::getDelay(void) {
+//     return 1;
+// }
+
+void FetchAligner::setPCGen_in(uint64_t c_) {
     uint64_t pc = pc_ptr[getInstrIndex()];
-    int fetch_delay = ALIGNED_DELAY;
+    
+    //printf("%x:", (uint32_t)pc);
 
-    if((pc - pc_prev) != 4 || pc & 0xF == 0x0) {
+    //printf("\t%d", c_);
+    IF_start_next = c_-1;
+    //printf("\n");
+}
+
+uint64_t FetchAligner::getPCGen_out(void) { 
+
+    uint64_t pc = pc_ptr[getInstrIndex()];
+    
+    int fetch_delay = ALIGNED_DELAY;
+    if (pc == INITIAL_PC) {
+        pc_prev = pc;
+        return 1;
+    } else if ((pc - pc_prev) != 4) {
         fetch_delay = UNALIGNED_DELAY;
-    }
-    if(pc == INITIAL_PC) {
-        fetch_delay = ALIGNED_DELAY;
+    } else if ((pc & 0xF) == 0x0) {
+        fetch_delay = UNALIGNED_DELAY;
     }
 
     pc_prev = pc;
-    return fetch_delay;
+    
+    return IF_start_next + fetch_delay; 
 }
 
-} // namespace cva6
+}  // namespace rv32_4issue

@@ -29,36 +29,42 @@ namespace rv32_4issue {
 
 enum ALU_Type {
     EMPTY,
+    LUI,
     INT,
     MUL,
     DIV,
     BR,
+    JAL,
     CSR
 };
 
-class Scheduler : public ConnectorModel {
+class Scheduler : public ResourceModel {
    public:
     // TODO: Check if delays are matching observations!
-    Scheduler(PerformanceModel* parent_) : ConnectorModel("Scheduler", parent_) {};
+    Scheduler(PerformanceModel* parent_) : ResourceModel("Scheduler", parent_) {};
+    virtual int getDelay(void);
 
     uint64_t getIssue_ALU(void);
-    uint64_t getLookUP_ALU(void);
 
-    void setDec_INT(uint64_t c_);
-    void setDec_MUL(uint64_t c_);
-    void setDec_BR(uint64_t c_);
-    void setDec_CSR(uint64_t c_);
-    void setDec_DIV(uint64_t c_);
+    void setRn_ADDI(uint64_t c_);
+    void setRn_INT(uint64_t c_);
+    void setRn_MUL(uint64_t c_);
+    void setRn_BR(uint64_t c_);
+    void setRn_JAL(uint64_t c_);
+    void setRn_CSR(uint64_t c_);
+    void setRn_DIV(uint64_t c_);
 
     void setEX_Alu(uint64_t c_);
     void setCOM_Alu(uint64_t c_);
 
-    // Trace value
+    // Trace values
     uint64_t* pc_ptr;
+    uint64_t* rs1_ptr;
+    uint64_t* rd_ptr;
 
    private:
     ALU_Type instr_type = ALU_Type::EMPTY;
-    uint64_t dec_cycle = 0;
+    uint64_t rn_cycle = 0;
     uint64_t ex_cycle = 0;
     uint64_t com_cycle = 0;
 
@@ -66,9 +72,9 @@ class Scheduler : public ConnectorModel {
 
     int selected_alu = 0;
 
-    //FU_INT_OH|FU_MUL_OH
-    //FU_INT_OH|FU_BRANCH_OH|FU_MUL_OH
-    //FU_INT_OH|FU_BRANCH_OH|FU_DIV_OH|FU_CSR_OH
+    // FU_INT_OH|FU_MUL_OH
+    // FU_INT_OH|FU_BRANCH_OH|FU_MUL_OH
+    // FU_INT_OH|FU_BRANCH_OH|FU_DIV_OH|FU_CSR_OH
     uint64_t alu_avail[3] = {0, 0, 0};
 };
 

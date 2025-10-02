@@ -29,11 +29,14 @@
 
 namespace rv32_4issue {
 
-class FetchAligner : public ResourceModel {
+class FetchAligner : public ConnectorModel {
    public:
     // TODO: Check if delays are matching observations!
-    FetchAligner(PerformanceModel* parent_) : ResourceModel("FetchAligner", parent_), ALIGNED_DELAY(1), UNALIGNED_DELAY(2) {};
-    virtual int getDelay(void);
+    FetchAligner(PerformanceModel* parent_) : ConnectorModel("FetchAligner", parent_), ALIGNED_DELAY(0), UNALIGNED_DELAY(1) {};
+    //virtual int getDelay(void);
+
+    void setPCGen_in(uint64_t c_);
+    uint64_t getPCGen_out(void);
 
     // Trace value
     uint64_t* pc_ptr;
@@ -41,6 +44,8 @@ class FetchAligner : public ResourceModel {
    private:
 
     uint64_t pc_prev = INITIAL_PC-4;
+
+    uint64_t IF_start_next = 0;
 
     // Constants
     const int ALIGNED_DELAY;

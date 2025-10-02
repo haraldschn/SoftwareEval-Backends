@@ -22,111 +22,150 @@
 
 namespace rv32_4issue {
 
+int Scheduler::getDelay(void) {
+    // DELAY for LD and ALU Stages
+    int delay = 1;
 
-std::string getInstrString(ALU_Type type)
-{
-    switch (type)
-    {
-    case ALU_Type::INT: return "ALU_INT";
-    case ALU_Type::MUL: return "ALU_MUL";
-    case ALU_Type::DIV: return "ALU_DIV";
-    case ALU_Type::BR: return "ALU_BRANCH";
-    case ALU_Type::CSR: return "ALU_CSR";
-    default:    return "???";
+    if (instr_type == ALU_Type::LUI || instr_type == ALU_Type::JAL) {
+        delay = 0;
+    }
+
+    return delay;
+}
+
+std::string getInstrString(ALU_Type type) {
+    switch (type) {
+        case ALU_Type::LUI:
+            return "ALU_INT (ADDI, LUI)";
+        case ALU_Type::INT:
+            return "ALU_INT";
+        case ALU_Type::MUL:
+            return "ALU_MUL";
+        case ALU_Type::DIV:
+            return "ALU_DIV";
+        case ALU_Type::BR:
+            return "ALU_BRANCH";
+        case ALU_Type::JAL:
+            return "ALU_JAL";
+        case ALU_Type::CSR:
+            return "ALU_CSR";
+        default:
+            return "???";
     }
 }
 
 uint64_t Scheduler::getIssue_ALU(void) {
-    earliest_scheduling = dec_cycle+3;
+    earliest_scheduling = rn_cycle + 2;
 
-    switch (instr_type)
-    {
-    case ALU_Type::INT:
-        if (alu_avail[0] <= alu_avail[1] && alu_avail[0] <= alu_avail[2]) {
-            earliest_scheduling = std::max(earliest_scheduling, alu_avail[0]);
-            selected_alu = 0;
-        } else if (alu_avail[1] <= alu_avail[2]) {
-            earliest_scheduling = std::max(earliest_scheduling, alu_avail[1]);
-            selected_alu = 1;
-        } else {
+    switch (instr_type) {
+        case ALU_Type::LUI:
+            // LUI (pseudo ADDI with rs1/rs2 == 0)
+            // only RN -> Commit
+            earliest_scheduling = rn_cycle;
+            break;
+        case ALU_Type::INT:
+            if (alu_avail[0] <= alu_avail[1] && alu_avail[0] <= alu_avail[2]) {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[0]);
+                selected_alu = 0;
+            } else if (alu_avail[1] <= alu_avail[2]) {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[1]);
+                selected_alu = 1;
+            } else {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[2]);
+                selected_alu = 2;
+            }
+            break;
+        case ALU_Type::MUL:
+            if (alu_avail[0] <= alu_avail[1]) {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[0]);
+                selected_alu = 0;
+            } else {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[1]);
+                selected_alu = 1;
+            }
+            break;
+        case ALU_Type::DIV:
             earliest_scheduling = std::max(earliest_scheduling, alu_avail[2]);
             selected_alu = 2;
-        }
-        break;
-    case ALU_Type::MUL:
-        if (alu_avail[0] <= alu_avail[1]) {
-            earliest_scheduling = std::max(earliest_scheduling, alu_avail[0]);
-            selected_alu = 0;
-        } else {
-            earliest_scheduling = std::max(earliest_scheduling, alu_avail[1]);
-            selected_alu = 1;
-        }
-        break;
-    case ALU_Type::DIV:
-        earliest_scheduling = std::max(earliest_scheduling, alu_avail[2]);
-        selected_alu = 2;
-        break;
-    case ALU_Type::BR:
-        if (alu_avail[1] <= alu_avail[2]) {
-            earliest_scheduling = std::max(earliest_scheduling, alu_avail[1]);
-            selected_alu = 1;
-        } else {
-            earliest_scheduling = std::max(earliest_scheduling, alu_avail[2]);
+            break;
+        case ALU_Type::JAL:
+            // JAL with RD==0
+            // only RN -> Commit
+            earliest_scheduling = rn_cycle;
+            break;
+        case ALU_Type::BR:
+            if (alu_avail[1] <= alu_avail[2]) {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[1]);
+                selected_alu = 1;
+            } else {
+                earliest_scheduling = std::max(earliest_scheduling, alu_avail[2]);
+                selected_alu = 2;
+            }
+            break;
+        case ALU_Type::CSR:
+            // CSR earliest scheduling 1 cycle after previous commit
+            earliest_scheduling = std::max(com_cycle + 1, alu_avail[2]);
             selected_alu = 2;
-        }
-        break;
-    case ALU_Type::CSR:
-        // CSR earliest scheduling 1 cycle after previous commit
-        earliest_scheduling = std::max(com_cycle + 1, alu_avail[2]);
-        selected_alu = 2;
-        break;
-    
-    default:
-        std::cout << "Scheduler.cpp Error: Not defined ALU_Type in Stage Issue_ALU";
-        break;
+            break;
+
+        default:
+            std::cout << "Scheduler.cpp Error: Not defined ALU_Type in Stage Issue_ALU";
+            break;
     }
 
-    //std::cout << earliest_scheduling << std::endl;
-    return earliest_scheduling; 
+    // std::cout << earliest_scheduling << std::endl;
+    return earliest_scheduling;
 };
 
-uint64_t Scheduler::getLookUP_ALU(void) {
-    return earliest_scheduling+1;
-}
-
-void Scheduler::setDec_INT(uint64_t c_) {
-    dec_cycle = c_;
+void Scheduler::setRn_ADDI(uint64_t c_) {
+    rn_cycle = c_;
+    if (rs1_ptr[getInstrIndex()] == 0) {
+        instr_type = ALU_Type::LUI;
+    } else {
+        instr_type = ALU_Type::INT;
+    }
+};
+void Scheduler::setRn_INT(uint64_t c_) {
+    rn_cycle = c_;
     instr_type = ALU_Type::INT;
 };
-void Scheduler::setDec_MUL(uint64_t c_) {
-    dec_cycle = c_;
+void Scheduler::setRn_MUL(uint64_t c_) {
+    rn_cycle = c_;
     instr_type = ALU_Type::MUL;
 };
-void Scheduler::setDec_BR(uint64_t c_) {
-    dec_cycle = c_;
+void Scheduler::setRn_BR(uint64_t c_) {
+    rn_cycle = c_;
     instr_type = ALU_Type::BR;
 };
-void Scheduler::setDec_CSR(uint64_t c_) {
-    dec_cycle = c_;
+void Scheduler::setRn_JAL(uint64_t c_) {
+    rn_cycle = c_;
+    if (rd_ptr[getInstrIndex()] == 0) {
+        instr_type = ALU_Type::JAL;
+    } else {
+        instr_type = ALU_Type::BR;
+    }
+};
+void Scheduler::setRn_CSR(uint64_t c_) {
+    rn_cycle = c_;
     instr_type = ALU_Type::CSR;
 };
-void Scheduler::setDec_DIV(uint64_t c_) {
-    dec_cycle = c_;
+void Scheduler::setRn_DIV(uint64_t c_) {
+    rn_cycle = c_;
     instr_type = ALU_Type::DIV;
 };
 
 void Scheduler::setEX_Alu(uint64_t c_) {
-    if (instr_type != ALU_Type::EMPTY) {
-        alu_avail[selected_alu] = c_-1;
+    if (instr_type != ALU_Type::EMPTY || instr_type != ALU_Type::LUI || instr_type != ALU_Type::JAL) {
+        alu_avail[selected_alu] = c_ - 1;
     }
-    ex_cycle = c_; 
+    ex_cycle = c_;
 };
 void Scheduler::setCOM_Alu(uint64_t c_) {
     // Written at uA_WFC_alu
     com_cycle = c_ + 1;
     // if (instr_type != ALU_Type::EMPTY) {
     //     std::cout << "ALU-Instruction " << getInstrString(instr_type)
-    //               << " decode finished at " << dec_cycle
+    //               << " rename finished at " << rn_cycle
     //               << " execute finished at " << ex_cycle
     //               << " in ALU_" << (selected_alu+1)
     //               << " commited at " << com_cycle << std::endl;

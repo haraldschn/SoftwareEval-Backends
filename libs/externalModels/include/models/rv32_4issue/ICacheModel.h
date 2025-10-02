@@ -25,6 +25,15 @@
 
 #include "PerformanceModel.h"
 
+// Parameters to customize Cache layout
+#define ICACHE_WAY 4
+#define ICACHE_SIZE_LINES 8 // 2^8 = 256 lines
+
+#define ICACHE_LINE_BYTES 4
+
+#define ICACHE_SIZE (2 << ICACHE_SIZE_LINES)  // 2 << 8 = 256
+#define ICACHE_LINE_SIZE ((2 << ICACHE_LINE_BYTES) * 8)
+
 namespace rv32_4issue {
 
 struct ICacheEntry {
@@ -49,18 +58,20 @@ class ICacheModel : public ResourceModel {
 
    private:
     // Cache state
-    // TODO: Associativity hard-coded to 4
-    ICacheEntry tag_cache[4][4096];
-    // bool valid_cache[4][256]= {false};
-    bool isMiss = false;
-    uint64_t pc_prev = 0x80000000-4;
+    ICacheEntry tag_cache[ICACHE_WAY][ICACHE_SIZE];
 
-    // Time when ICache relaeses block on miss
+    bool isMiss = false;
+    uint64_t pc_prev = 0x80000000 - 4;
+
+    // Time when ICache releases block on miss
     uint64_t t_ic = 0;
 
     // Constants
     const int CACHE_DELAY;
     const int MEMORY_DELAY;
+
+    const uint64_t ICACHE_INDEX_MASK = (ICACHE_SIZE - 1) << ICACHE_LINE_BYTES;
+    const uint64_t ICACHE_TAG_MASK = (~((ICACHE_SIZE * (2 << ICACHE_LINE_BYTES)) - 1));
 
     // Support functions
     bool inCache(uint64_t);

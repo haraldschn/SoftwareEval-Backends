@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Chair of EDA, Technical University of Munich
+ * Copyright 2025 Chair of EDA, Technical University of Munich
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,7 @@ public:
   void push(uint64_t);
   uint64_t pop(void);
 private:
+  const long unsigned int MAX_STACK_SIZE = 32;
   std::stack<ReturnAddressEntry> stack;
 };
 
@@ -98,7 +99,7 @@ private:
 class BranchPredictionModel : public ConnectorModel
 {
 public:
-  BranchPredictionModel(PerformanceModel* parent_) : ConnectorModel("RV32_4ISSUE_BranchPredictionModel", parent_), bht(), ras(), btb() {};
+  BranchPredictionModel(PerformanceModel* parent_) : ConnectorModel("RV32_4ISSUE_BranchPredictionModel", parent_), bht(), btb(), ras() {};
    
   // API
   void setPc_p(uint64_t);

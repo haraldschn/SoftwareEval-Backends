@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Chair of EDA, Technical University of Munich
+ * Copyright 2025 Chair of EDA, Technical University of Munich
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,10 @@ void ReturnAddressStack::push(uint64_t ra_)
   new_entry.valid = true;
 
   stack.push(new_entry);
+
+  if (stack.size() > MAX_STACK_SIZE) {
+    stack.pop();
+  }
 }
 
 uint64_t ReturnAddressStack::pop(void)
@@ -122,7 +126,7 @@ void BranchPredictionModel::setPc_p(uint64_t pc_p_)
   branchPc = pc_ptr[getInstrIndex()];
   branchTarget = brTarget_ptr[getInstrIndex()];
   branchPredictedTaken = bht.getPrediction(branchPc, imm_ptr[getInstrIndex()]);
-  t_pc_pt = pc_p_;  
+  t_pc_pt = pc_p_;
 }
 
 void BranchPredictionModel::setPc_p_j(uint64_t pc_p_)

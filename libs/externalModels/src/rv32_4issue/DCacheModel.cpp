@@ -27,30 +27,30 @@ namespace rv32_4issue {
 int DCacheModel::getDelay(void) {
     uint64_t addr = addr_ptr[getInstrIndex()];
 
-    //printf("addr=%lx", (uint32_t)addr);
+    // printf("addr=%lx", (uint32_t)addr);
 
     // TODO: Robert's model calculates an additional delay here if address is blocked by a preceding store!
 
     if (!cachable(addr)) {
         isMiss = true;
-        //printf(", DELAY=%d\n", NOT_CACHABLE_DELAY);
+        // printf(", DELAY=%d\n", NOT_CACHABLE_DELAY);
         return NOT_CACHABLE_DELAY;
     }
     if (inCache(addr)) {
         isMiss = false;
-        //printf(", DELAY=%d\n", CACHE_DELAY);
+        // printf(", DELAY=%d\n", CACHE_DELAY);
         return CACHE_DELAY;
     }
     isMiss = true;
-    //printf(", DELAY=%d\n", MEMORY_DELAY);
+    // printf(", DELAY=%d\n", MEMORY_DELAY);
     return MEMORY_DELAY;
 }
 
 bool DCacheModel::inCache(uint64_t addr_) {
-    uint64_t tag = (addr_ & 0x00FFFFFFFFFF0000) >> 16;   // pc_[55:12]
-    uint64_t index = (addr_ & 0x000000000000FFF0) >> 4;  // pc_[11:4]
+    uint64_t tag = (addr_ & DCACHE_TAG_MASK) >> DCACHE_SIZE_LINES >> DCACHE_LINE_BYTES;
+    uint64_t index = (addr_ & DCACHE_INDEX_MASK) >> DCACHE_LINE_BYTES;
 
-    for (int way_i = 0; way_i < 4; way_i++) {
+    for (int way_i = 0; way_i < DCACHE_WAY; way_i++) {
         if (tag_cache[way_i][index].tag == tag) {
             // Cache hit
             return true;
@@ -59,16 +59,14 @@ bool DCacheModel::inCache(uint64_t addr_) {
 
     // Cache miss
     updateCache(tag, index);
-    updateCache(tag, (index+1)%4096);
-    updateCache(tag, (index+2)%4096);
-    updateCache(tag, (index+3)%4096);
+
     return false;
 }
 
 void DCacheModel::updateCache(uint64_t tag_, uint64_t index_) {
     int way = -1;
 
-    for (int way_i = 0; way_i < 4; way_i++) {
+    for (int way_i = 0; way_i < DCACHE_WAY; way_i++) {
         if (!tag_cache[way_i][index_].valid) {
             way = way_i;
             break;
@@ -76,7 +74,7 @@ void DCacheModel::updateCache(uint64_t tag_, uint64_t index_) {
     }
 
     if (way == -1) {
-        way = lfsr() & 0x03;
+        way = lfsr();
     }
 
     tag_cache[way][index_].tag = tag_;
@@ -87,21 +85,19 @@ int DCacheModel::lfsr(void) {
     static uint8_t shift_state = 0;
     uint8_t shift_in = ~(((shift_state & 0x80) >> 7) ^ ((shift_state & 0x08) >> 3) ^ ((shift_state & 0x04) >> 2) ^ ((shift_state & 0x02) >> 1));
     shift_state = (shift_state << 1) | (shift_in & 0x01);
-    return (shift_state & 0x07);
+    return (shift_state & (DCACHE_WAY - 1));
 }
 
-std::string DCacheModel::getInfoHeader()
-{
-  std::stringstream ret_strs;
-  ret_strs << "L1D:miss";
-  return ret_strs.str();
+std::string DCacheModel::getInfoHeader() {
+    std::stringstream ret_strs;
+    ret_strs << "L1D:miss";
+    return ret_strs.str();
 }
 
-std::string DCacheModel::getInfoStream()
-{
-  std::stringstream ret_strs;
-  ret_strs << isMiss;  
-  return ret_strs.str();
-} 
+std::string DCacheModel::getInfoStream() {
+    std::stringstream ret_strs;
+    ret_strs << isMiss;
+    return ret_strs.str();
+}
 
 }  // namespace rv32_4issue
