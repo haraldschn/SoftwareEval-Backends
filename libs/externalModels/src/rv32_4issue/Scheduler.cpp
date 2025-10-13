@@ -36,7 +36,7 @@ int Scheduler::getDelay(void) {
 std::string getInstrString(ALU_Type type) {
     switch (type) {
         case ALU_Type::LUI:
-            return "ALU_INT (ADDI, LUI)";
+            return "ALU_INT (ADDI / LUI)";
         case ALU_Type::INT:
             return "ALU_INT";
         case ALU_Type::MUL:
@@ -155,7 +155,9 @@ void Scheduler::setRn_DIV(uint64_t c_) {
 };
 
 void Scheduler::setEX_Alu(uint64_t c_) {
-    if (instr_type != ALU_Type::EMPTY || instr_type != ALU_Type::LUI || instr_type != ALU_Type::JAL) {
+    if (instr_type == ALU_Type::MUL) {
+        alu_avail[selected_alu] = c_ - 1 - 3; // Correction for pipelined multiply
+    } else if (instr_type != ALU_Type::EMPTY || instr_type != ALU_Type::LUI || instr_type != ALU_Type::JAL) {
         alu_avail[selected_alu] = c_ - 1;
     }
     ex_cycle = c_;

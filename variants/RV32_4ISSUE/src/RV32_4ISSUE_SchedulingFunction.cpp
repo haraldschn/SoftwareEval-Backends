@@ -36,7 +36,7 @@ static SchedulingFunction *schedulingFunction_add = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -103,14 +103,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -150,7 +150,7 @@ static SchedulingFunction *schedulingFunction_sub = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -217,14 +217,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -264,7 +264,7 @@ static SchedulingFunction *schedulingFunction_xor = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -331,14 +331,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -378,7 +378,7 @@ static SchedulingFunction *schedulingFunction_or = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -445,14 +445,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -492,7 +492,7 @@ static SchedulingFunction *schedulingFunction_and = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -559,14 +559,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -606,7 +606,7 @@ static SchedulingFunction *schedulingFunction_slt = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -673,14 +673,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -720,7 +720,7 @@ static SchedulingFunction *schedulingFunction_sltu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -787,14 +787,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -834,7 +834,7 @@ static SchedulingFunction *schedulingFunction_sll = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -901,14 +901,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -948,7 +948,7 @@ static SchedulingFunction *schedulingFunction_srl = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1015,14 +1015,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1062,7 +1062,7 @@ static SchedulingFunction *schedulingFunction_sra = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1129,14 +1129,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1176,7 +1176,7 @@ static SchedulingFunction *schedulingFunction_addi = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1240,14 +1240,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1287,7 +1287,7 @@ static SchedulingFunction *schedulingFunction_xori = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1351,14 +1351,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1398,7 +1398,7 @@ static SchedulingFunction *schedulingFunction_ori = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1462,14 +1462,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1509,7 +1509,7 @@ static SchedulingFunction *schedulingFunction_andi = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1573,14 +1573,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1620,7 +1620,7 @@ static SchedulingFunction *schedulingFunction_slti = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1684,14 +1684,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1731,7 +1731,7 @@ static SchedulingFunction *schedulingFunction_sltiu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1795,14 +1795,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1842,7 +1842,7 @@ static SchedulingFunction *schedulingFunction_slli = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -1906,14 +1906,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -1953,7 +1953,7 @@ static SchedulingFunction *schedulingFunction_srli = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2017,14 +2017,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -2064,7 +2064,7 @@ static SchedulingFunction *schedulingFunction_srai = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2128,14 +2128,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -2175,7 +2175,7 @@ static SchedulingFunction *schedulingFunction_auipc = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2236,14 +2236,14 @@ uint64_t n_uA_Issue_ALU;
 n_uA_Issue_ALU = std::max({n_RN_stage, perfModel->schedModel.getIssue_ALU()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -2283,7 +2283,7 @@ static SchedulingFunction *schedulingFunction_lui = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2344,14 +2344,14 @@ uint64_t n_uA_Issue_ALU;
 n_uA_Issue_ALU = std::max({n_RN_stage, perfModel->schedModel.getIssue_ALU()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -2391,7 +2391,7 @@ static SchedulingFunction *schedulingFunction_mul = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2458,14 +2458,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // MUL
 uint64_t n_MUL;
@@ -2505,7 +2505,7 @@ static SchedulingFunction *schedulingFunction_mulh = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2572,14 +2572,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // MUL
 uint64_t n_MUL;
@@ -2619,7 +2619,7 @@ static SchedulingFunction *schedulingFunction_mulhu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2686,14 +2686,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // MUL
 uint64_t n_MUL;
@@ -2733,7 +2733,7 @@ static SchedulingFunction *schedulingFunction_mulhsu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2800,14 +2800,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // MUL
 uint64_t n_MUL;
@@ -2847,7 +2847,7 @@ static SchedulingFunction *schedulingFunction_div = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -2914,18 +2914,18 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // DIV
 uint64_t n_DIV;
-n_DIV = n_LD_substage_alu_OoO + perfModel->divider.getDelay();
+n_DIV = n_LD_substage_alu_OoO + 33;
 perfModel->regModel.setXd(n_DIV);
 perfModel->schedModel.setEX_Alu(n_DIV);
 // EX_stage_alu_OoO
@@ -2961,7 +2961,7 @@ static SchedulingFunction *schedulingFunction_rem = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3028,18 +3028,18 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // DIV
 uint64_t n_DIV;
-n_DIV = n_LD_substage_alu_OoO + perfModel->divider.getDelay();
+n_DIV = n_LD_substage_alu_OoO + 33;
 perfModel->regModel.setXd(n_DIV);
 perfModel->schedModel.setEX_Alu(n_DIV);
 // EX_stage_alu_OoO
@@ -3075,7 +3075,7 @@ static SchedulingFunction *schedulingFunction_divu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3142,18 +3142,18 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // DIVU
 uint64_t n_DIVU;
-n_DIVU = n_LD_substage_alu_OoO + perfModel->divider_u.getDelay();
+n_DIVU = n_LD_substage_alu_OoO + 33;
 perfModel->regModel.setXd(n_DIVU);
 perfModel->schedModel.setEX_Alu(n_DIVU);
 // EX_stage_alu_OoO
@@ -3189,7 +3189,7 @@ static SchedulingFunction *schedulingFunction_remu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3256,18 +3256,18 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // DIVU
 uint64_t n_DIVU;
-n_DIVU = n_LD_substage_alu_OoO + perfModel->divider_u.getDelay();
+n_DIVU = n_LD_substage_alu_OoO + 33;
 perfModel->regModel.setXd(n_DIVU);
 perfModel->schedModel.setEX_Alu(n_DIVU);
 // EX_stage_alu_OoO
@@ -3303,7 +3303,7 @@ static SchedulingFunction *schedulingFunction_csrrw = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3367,14 +3367,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -3414,7 +3414,7 @@ static SchedulingFunction *schedulingFunction_csrrs = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3478,14 +3478,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -3525,7 +3525,7 @@ static SchedulingFunction *schedulingFunction_csrrc = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3589,14 +3589,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -3636,7 +3636,7 @@ static SchedulingFunction *schedulingFunction_csrrwi = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3697,14 +3697,14 @@ uint64_t n_uA_Issue_ALU;
 n_uA_Issue_ALU = std::max({n_RN_stage, perfModel->schedModel.getIssue_ALU()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -3744,7 +3744,7 @@ static SchedulingFunction *schedulingFunction_csrrsi = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3805,14 +3805,14 @@ uint64_t n_uA_Issue_ALU;
 n_uA_Issue_ALU = std::max({n_RN_stage, perfModel->schedModel.getIssue_ALU()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -3852,7 +3852,7 @@ static SchedulingFunction *schedulingFunction_csrrci = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -3913,14 +3913,14 @@ uint64_t n_uA_Issue_ALU;
 n_uA_Issue_ALU = std::max({n_RN_stage, perfModel->schedModel.getIssue_ALU()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -3960,7 +3960,7 @@ static SchedulingFunction *schedulingFunction_sb = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4033,7 +4033,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // STORE
 uint64_t n_STORE;
@@ -4074,7 +4074,7 @@ static SchedulingFunction *schedulingFunction_sh = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4147,7 +4147,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // STORE
 uint64_t n_STORE;
@@ -4188,7 +4188,7 @@ static SchedulingFunction *schedulingFunction_sw = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4261,7 +4261,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // STORE
 uint64_t n_STORE;
@@ -4302,7 +4302,7 @@ static SchedulingFunction *schedulingFunction_lw = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4372,7 +4372,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // DCache
 uint64_t n_DCache;
@@ -4410,7 +4410,7 @@ static SchedulingFunction *schedulingFunction_lh = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4480,7 +4480,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // DCache
 uint64_t n_DCache;
@@ -4518,7 +4518,7 @@ static SchedulingFunction *schedulingFunction_lhu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4588,7 +4588,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // DCache
 uint64_t n_DCache;
@@ -4626,7 +4626,7 @@ static SchedulingFunction *schedulingFunction_lb = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4696,7 +4696,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // DCache
 uint64_t n_DCache;
@@ -4734,7 +4734,7 @@ static SchedulingFunction *schedulingFunction_lbu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4804,7 +4804,7 @@ uint64_t n_LookupAGU;
 n_LookupAGU = n_IS_substage_agu + 1;
 // LD_substage_agu
 uint64_t n_LD_substage_agu;
-n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(2)});
+n_LD_substage_agu = std::max({n_LookupAGU, perfModel->LD_substage_agu.get(1), perfModel->EX_stage_agu.get(64)});
 perfModel->LD_substage_agu.set(n_LD_substage_agu);
 // DCache
 uint64_t n_DCache;
@@ -4842,7 +4842,7 @@ static SchedulingFunction *schedulingFunction_beq = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -4910,14 +4910,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -4957,7 +4957,7 @@ static SchedulingFunction *schedulingFunction_bne = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5025,14 +5025,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5072,7 +5072,7 @@ static SchedulingFunction *schedulingFunction_blt = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5140,14 +5140,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5187,7 +5187,7 @@ static SchedulingFunction *schedulingFunction_bge = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5255,14 +5255,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5302,7 +5302,7 @@ static SchedulingFunction *schedulingFunction_bltu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5370,14 +5370,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5417,7 +5417,7 @@ static SchedulingFunction *schedulingFunction_bgeu = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5485,14 +5485,14 @@ uint64_t n_uA_OF_B_alu;
 n_uA_OF_B_alu = std::max({n_RN_stage, perfModel->regModel.getXb()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, n_uA_OF_B_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5532,7 +5532,7 @@ static SchedulingFunction *schedulingFunction_jal = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5594,14 +5594,14 @@ uint64_t n_uA_Issue_ALU;
 n_uA_Issue_ALU = std::max({n_RN_stage, perfModel->schedModel.getIssue_ALU()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5641,7 +5641,7 @@ static SchedulingFunction *schedulingFunction_jalr = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});
@@ -5706,14 +5706,14 @@ uint64_t n_uA_OF_A_alu;
 n_uA_OF_A_alu = std::max({n_RN_stage, perfModel->regModel.getXa()});
 // IS_substage_alu_OoO
 uint64_t n_IS_substage_alu_OoO;
-n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(24)});
+n_IS_substage_alu_OoO = std::max({n_uA_Issue_ALU, n_uA_OF_A_alu, perfModel->LD_substage_alu_OoO.get(64)});
 perfModel->IS_substage_alu_OoO.set(n_IS_substage_alu_OoO);
 // LookupALU
 uint64_t n_LookupALU;
 n_LookupALU = n_IS_substage_alu_OoO + perfModel->schedModel.getDelay();
 // LD_substage_alu_OoO
 uint64_t n_LD_substage_alu_OoO;
-n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(24)});
+n_LD_substage_alu_OoO = std::max({n_LookupALU, perfModel->EX_stage_alu_OoO.get(64)});
 perfModel->LD_substage_alu_OoO.set(n_LD_substage_alu_OoO);
 // ALU
 uint64_t n_ALU;
@@ -5753,7 +5753,7 @@ static SchedulingFunction *schedulingFunction__def = new SchedulingFunction(
   RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
-n_Enter = std::max({perfModel->IF_stage.get(20), perfModel->PC_substage.get(4)});
+n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
 // uA_PCGen
 uint64_t n_uA_PCGen;
 n_uA_PCGen = std::max({n_Enter, perfModel->fetchAligner.getPCGen_out()});

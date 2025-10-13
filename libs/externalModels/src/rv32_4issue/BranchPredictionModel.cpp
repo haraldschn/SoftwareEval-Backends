@@ -105,17 +105,17 @@ uint64_t ReturnAddressStack::pop(void)
 uint64_t BranchTargetBuffer::getPrediction(uint64_t pc_)
 {
   // TODO: Different behavior for unaligned!
-  if(tab[getIndex(pc_)].valid)
+  if(tab[getIndexBTB(pc_)].valid)
   {
-    return tab[getIndex(pc_)].addr;
+    return tab[getIndexBTB(pc_)].addr;
   }
   return INVALID_BRANCH_ADDRESS;
 }
 
 void BranchTargetBuffer::update(uint64_t pc_, uint64_t taddr_)
 {
-  tab[getIndex(pc_)].valid = true;
-  tab[getIndex(pc_)].addr = taddr_;
+  tab[getIndexBTB(pc_)].valid = true;
+  tab[getIndexBTB(pc_)].addr = taddr_;
   //printf("%lx: index BTB %lx\n", pc_, getIndex(pc_));
 }
 
@@ -137,6 +137,10 @@ void BranchPredictionModel::setPc_p_j(uint64_t pc_p_)
   {
     // TODO: Different handling for compressed
     ras.push(pc_ptr[getInstrIndex()] + 4);
+  }
+
+  if(isPseudoJ()) {
+    j_flag = true;
   }
 
   t_pc_pt = pc_p_;
@@ -177,16 +181,22 @@ void BranchPredictionModel::setPc_p_jr(uint64_t pc_p_)
 // Do evalutation and updates here, as this function is always called before getPc_pt
 uint64_t BranchPredictionModel::getPc_mp(void)
 {
+  uint64_t curPc = pc_ptr[getInstrIndex()];
   isMispredict = false;
   isTaken = false;
+  in_BTB = false;
   
   // Check if previous instr was a branch
   if(branch_flag)
   {
     // Determine if branch was taken
-    uint64_t curPc = pc_ptr[getInstrIndex()];
     isTaken = (curPc == branchTarget);
-    
+    // Bool to save if BTB entry is correct
+    in_BTB = (btb.getPrediction(branchPc) == branchTarget);
+
+    // Update BTB
+    btb.update(branchPc, branchTarget);
+
     // Determine if branch was mispredicted
     isMispredict = branchPredictedTaken != isTaken;
     
@@ -206,17 +216,25 @@ uint64_t BranchPredictionModel::getPc_mp(void)
   // Check if previous instr was jump with immediate base
   else if(jump_flag)
   {
+    // Bool to save if BTB entry is correct
+    in_BTB = (btb.getPrediction(branchPc) == curPc);
+
+    // Update BTB
+    btb.update(branchPc, curPc);
+
     isTaken = true; // used for info prints
   }
   
   // Check if previous instr was jump with register base
   else if(jumpR_flag)
   {
+    // Bool to save if BTB entry is correct
+    in_BTB = (btb.getPrediction(branchPc) == curPc);
+
     // For a jump, branch is always taken
     isTaken = true; // Used for info print
     
     // Determine if branch was mispredicted
-    uint64_t curPc = pc_ptr[getInstrIndex()];
     isMispredict = (curPc != branchTarget);
 
     // Update BTB
@@ -247,8 +265,11 @@ uint64_t BranchPredictionModel::getPc_pt(void)
     if(!isMispredict & isTaken)
     {
       pc_info = t_pc_pt;
-      return t_pc_pt;
-    }   
+      return pc_info;
+    }/*  else if(!isMispredict) {
+      pc_info = in_BTB ? t_pc_pt-1 : t_pc_pt+2;
+      return pc_info;
+    } */
   }
 
   // In case of (only imm-dependent) jump: Always taken
@@ -256,7 +277,7 @@ uint64_t BranchPredictionModel::getPc_pt(void)
   {
     jump_flag = false;
     pc_info = t_pc_pt;
-    return t_pc_pt;
+    return pc_info;
   }
 
   // In case of register-base jump
@@ -267,13 +288,13 @@ uint64_t BranchPredictionModel::getPc_pt(void)
     if(!isMispredict)
     {
       pc_info = t_pc_pt;
-      return t_pc_pt;
+      return pc_info;
     }
   }
   
   // Default: Branch/Jump was not correctly predicted
   pc_info = 0;
-  return 0; // Use 0 to disregard the pc_pt connector in any max operation
+  return pc_info; // Use 0 to disregard the pc_pt connector in any max operation
 }
 
 std::string BranchPredictionModel::getInfoHeader()

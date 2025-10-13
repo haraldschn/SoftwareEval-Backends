@@ -92,7 +92,13 @@ public:
   void update(uint64_t, uint64_t);
 private:
   std::array<TargetBufferEntry, 4096> tab;
-  int getIndex(uint64_t pc_) { return ((pc_ & 0x00001FFE) >> 1); };
+  //int getIndex(uint64_t pc_) { return ((pc_ & 0x00001FFE) >> 1); };
+  int getIndexBTB(uint64_t pc_) {
+    // src is branchpc + 4
+    // fetchStartOffs are lower 3 bits of branchpc
+    // {IN_btUpdate.src[$clog2(LENGTH):$bits(FetchOff_t)+1], IN_btUpdate.fetchStartOffs}
+    return (((pc_+4) & 0x000007F8) | (pc_ & 0x00000007)); 
+  };
 };
 
   
@@ -131,16 +137,20 @@ private:
   bool branchPredictedTaken = false;
 
   bool jump_flag = false;
+  bool j_flag = false;
 
   bool jumpR_flag = false;
   bool return_flag = false;
   
+  bool in_BTB = false;
+
   uint64_t t_pc_pt = 0; // predicted and taken
   uint64_t t_pc_mp = 0; // mispredicted
 
   bool isMispredict = false;
   bool isTaken = false;
   
+  bool isPseudoJ(void) { return ( (rd_ptr[getInstrIndex()] == 0)); };
   bool isCall(void) { return ( (rd_ptr[getInstrIndex()] == 1) | (rd_ptr[getInstrIndex()] == 5) ); };
   bool isReturn(void) {return ( (rs1_ptr[getInstrIndex()] != rd_ptr[getInstrIndex()]) & ((rs1_ptr[getInstrIndex()] == 1) | (rs1_ptr[getInstrIndex()] == 5)) ); };
   

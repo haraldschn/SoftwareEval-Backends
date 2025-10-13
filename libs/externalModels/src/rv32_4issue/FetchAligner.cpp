@@ -15,6 +15,7 @@
  */
 
 // TODO: Proof-of-concept model!
+// Only considers non-compressed instructions
 
 #include "models/rv32_4issue/FetchAligner.h"
 

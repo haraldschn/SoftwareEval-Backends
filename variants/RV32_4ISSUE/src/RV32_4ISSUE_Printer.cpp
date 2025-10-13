@@ -42,7 +42,6 @@ void RV32_4ISSUE_Printer::connectChannel(Channel* ch_)
   brTarget_ptr = channel->brTarget;
   imm_ptr = channel->imm;
   addr_ptr = channel->addr;
-  rs2_data_ptr = channel->rs2_data;
 }
 
 std::string RV32_4ISSUE_Printer::getPrintHeader(void)
@@ -55,7 +54,6 @@ std::string RV32_4ISSUE_Printer::getPrintHeader(void)
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "brTarget" << " | ";
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "imm" << " | ";
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "addr" << " | ";
-  caption_strs << std::setfill(' ') << std::setw(18) << std::left << "rs2_data" << " | ";
 
   return caption_strs.str();
 }

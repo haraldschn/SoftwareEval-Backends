@@ -49,9 +49,5 @@ void *RV32_4ISSUE_Channel::getTraceValueHook(std::string trVal_)
   {
     return addr;
   }
-  if(trVal_ == "rs2_data")
-  {
-    return rs2_data;
-  }
   return nullptr;
 }

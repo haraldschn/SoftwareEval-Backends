@@ -44,21 +44,29 @@ bool ICacheModel::inCache(uint64_t pc_) {
     if (pc_ == 0x80000000) {
         // Preload first 16 (=4x4) instructions (4 byte aligned)
         updateCache(tag, index);
+        // Preload next instructions (4 byte aligned)
+        uint64_t tag_nxt = ((pc_ + 16) & ICACHE_TAG_MASK) >> ICACHE_SIZE_LINES >> ICACHE_LINE_BYTES;
+        uint64_t index_nxt = ((pc_ + 16) & ICACHE_INDEX_MASK) >> ICACHE_LINE_BYTES;
+        updateCache(tag_nxt, index_nxt);
         return true;
     }
 
     for (int way_i = 0; way_i < ICACHE_WAY; way_i++) {
         if (tag_cache[way_i][index].tag == tag) {
             // Cache hit
-            uint64_t tag = ((pc_ + 16) & ICACHE_TAG_MASK) >> ICACHE_SIZE_LINES >> ICACHE_LINE_BYTES;
-            uint64_t index = ((pc_ + 16) & ICACHE_INDEX_MASK) >> ICACHE_LINE_BYTES;
-            updateCache(tag, index);
+            uint64_t tag_nxt = ((pc_ + 16) & ICACHE_TAG_MASK) >> ICACHE_SIZE_LINES >> ICACHE_LINE_BYTES;
+            uint64_t index_nxt = ((pc_ + 16) & ICACHE_INDEX_MASK) >> ICACHE_LINE_BYTES;
+            updateCache(tag_nxt, index_nxt);
             return true;
         }
     }
 
-    // Cache miss + Preload next 16 (=4x4) instructions (4 byte aligned)
+    // Cache miss
     updateCache(tag, index);
+    // Preload next instructions (4 byte aligned)
+    uint64_t tag_nxt = ((pc_ + 16) & ICACHE_TAG_MASK) >> ICACHE_SIZE_LINES >> ICACHE_LINE_BYTES;
+    uint64_t index_nxt = ((pc_ + 16) & ICACHE_INDEX_MASK) >> ICACHE_LINE_BYTES;
+    updateCache(tag_nxt, index_nxt);
     return false;
 }
 

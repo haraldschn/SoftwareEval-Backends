@@ -43,7 +43,6 @@ public:
   uint64_t get_brTarget(void){ return brTarget_ptr[instrIndex]; };
   uint64_t get_imm(void){ return imm_ptr[instrIndex]; };
   uint64_t get_addr(void){ return addr_ptr[instrIndex]; };
-  uint64_t get_rs2_data(void){ return rs2_data_ptr[instrIndex]; };
 
 private:
 
@@ -54,7 +53,6 @@ private:
   uint64_t* brTarget_ptr;
   uint64_t* imm_ptr;
   uint64_t* addr_ptr;
-  uint64_t* rs2_data_ptr;
 };
 
 #endif // SWEVAL_BACKENDS_RV32_4ISSUE_PRINTER_H

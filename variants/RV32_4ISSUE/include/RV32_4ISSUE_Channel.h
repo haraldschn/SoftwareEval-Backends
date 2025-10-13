@@ -40,7 +40,6 @@ public:
   uint64_t brTarget [100];
   uint64_t imm [100];
   uint64_t addr [100];
-  uint64_t rs2_data [100];
 
   virtual void *getTraceValueHook(std::string);
 };
