@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2022 Chair of EDA, Technical University of Munich
  *
@@ -15,37 +14,29 @@
  * limitations under the License.
  */
 
-#ifndef SWEVAL_BACKENDS_FACTORY_H
-#define SWEVAL_BACKENDS_FACTORY_H
+#include "models/rv32_ooo/NoBranchPredictModel.h"
 
-#include "Channel.h"
-#include "Backend.h"
-
+#include <cstdint>
 #include <string>
+#include <sstream>
 
-namespace SwEvalBackends
+namespace rv32_ooo{
+
+std::string NoBranchPredictModel::getInfoHeader()
 {
+  std::stringstream ret_strs;
+  ret_strs << "br:mispredict";
+  ret_strs << "," << "br:pc_avail";
+  return ret_strs.str();
+}
 
-class Factory
+std::string NoBranchPredictModel::getInfoStream()
 {
-private:
-  enum var_t { 
-	AssemblyTrace_RV32,
-	AssemblyTrace_RV64,
-	CV32E40P,
-	CVA6,
-	InstructionTrace_RV32IM_Zicsr,
-	InstructionTrace_RV64IMF_Zicsr,
-	RV32_inO,
-	RV32_OOO 
-  };
-public:
-  int getVariantHandle(std::string);
-  Channel* getChannel(int);
-  Backend* getPerformanceEstimator(int);
-  Backend* getTracePrinter(int);
-};
+  std::stringstream ret_strs;
+  ret_strs << mispredicted_info;
+  ret_strs << "," << pc_info;
+  return ret_strs.str();
+}
 
-} // namespace SwEvalBackends
-
-#endif //SWEVAL_BACKENDS_FACTORY_H
+    
+} // namespace common

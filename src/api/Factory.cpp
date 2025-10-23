@@ -25,25 +25,29 @@
 #include "TracePrinter.h"
 #include "Printer.h"
 
-#include "CV32E40P_Channel.h"
-#include "CV32E40P_PerformanceModel.h"
-#include "CV32E40P_Printer.h"
-
 #include "AssemblyTrace_RV32_Channel.h"
 #include "AssemblyTrace_RV32_Printer.h"
-
-#include "InstructionTrace_RV32IM_Zicsr_Channel.h"
-#include "InstructionTrace_RV32IM_Zicsr_Printer.h"
 
 #include "AssemblyTrace_RV64_Channel.h"
 #include "AssemblyTrace_RV64_Printer.h"
 
-#include "CVA6_Channel.h"
-#include "CVA6_Printer.h"
-#include "CVA6_PerformanceModel.h"
+#include "CV32E40P_Channel.h"
+#include "CV32E40P_PerformanceModel.h"
+#include "CV32E40P_Printer.h"
 
-#include "InstructionTrace_RV64IMF_Zicsr_Printer.h"
+#include "CVA6_Channel.h"
+#include "CVA6_PerformanceModel.h"
+#include "CVA6_Printer.h"
+
+#include "InstructionTrace_RV32IM_Zicsr_Channel.h"
+#include "InstructionTrace_RV32IM_Zicsr_Printer.h"
+
 #include "InstructionTrace_RV64IMF_Zicsr_Channel.h"
+#include "InstructionTrace_RV64IMF_Zicsr_Printer.h"
+
+#include "RV32_OOO_Channel.h"
+#include "RV32_OOO_PerformanceModel.h"
+#include "RV32_OOO_Printer.h"
 
 
 namespace SwEvalBackends
@@ -51,12 +55,13 @@ namespace SwEvalBackends
 
 int Factory::getVariantHandle(std::string varName_)
 {
-    	if(varName_ == "CV32E40P"){ return CV32E40P; }
-	if(varName_ == "AssemblyTrace_RV32"){ return AssemblyTrace_RV32; }
-	if(varName_ == "InstructionTrace_RV32IM_Zicsr"){ return InstructionTrace_RV32IM_Zicsr; }
+    	if(varName_ == "AssemblyTrace_RV32"){ return AssemblyTrace_RV32; }
 	if(varName_ == "AssemblyTrace_RV64"){ return AssemblyTrace_RV64; }
+	if(varName_ == "CV32E40P"){ return CV32E40P; }
 	if(varName_ == "CVA6"){ return CVA6; }
+	if(varName_ == "InstructionTrace_RV32IM_Zicsr"){ return InstructionTrace_RV32IM_Zicsr; }
 	if(varName_ == "InstructionTrace_RV64IMF_Zicsr"){ return InstructionTrace_RV64IMF_Zicsr; }
+	if(varName_ == "RV32_OOO"){ return RV32_OOO; }
 
     return -1;
 }
@@ -65,12 +70,13 @@ Channel* Factory::getChannel(int var_)
 {
   switch((var_t)var_)
   {
-    	case CV32E40P: return new CV32E40P_Channel();
-	case AssemblyTrace_RV32: return new AssemblyTrace_RV32_Channel();
-	case InstructionTrace_RV32IM_Zicsr: return new InstructionTrace_RV32IM_Zicsr_Channel();
+    	case AssemblyTrace_RV32: return new AssemblyTrace_RV32_Channel();
 	case AssemblyTrace_RV64: return new AssemblyTrace_RV64_Channel();
+	case CV32E40P: return new CV32E40P_Channel();
 	case CVA6: return new CVA6_Channel();
+	case InstructionTrace_RV32IM_Zicsr: return new InstructionTrace_RV32IM_Zicsr_Channel();
 	case InstructionTrace_RV64IMF_Zicsr: return new InstructionTrace_RV64IMF_Zicsr_Channel();
+	case RV32_OOO: return new RV32_OOO_Channel();
 
     default: return nullptr;
   }
@@ -87,6 +93,9 @@ Backend* Factory::getPerformanceEstimator(int var_)
 		break;
 	case CVA6:
 		perfModel = new CVA6::CVA6_PerformanceModel();
+		break;
+	case RV32_OOO:
+		perfModel = new RV32_OOO::RV32_OOO_PerformanceModel();
 		break;
 
     default: perfModel = nullptr;
@@ -109,23 +118,26 @@ Backend* Factory::getTracePrinter(int var_)
   Printer* printer;
   switch((var_t)var_)
   {
-    	case CV32E40P:
-		printer = new CV32E40P_Printer();
-		break;
-	case AssemblyTrace_RV32:
+    	case AssemblyTrace_RV32:
 		printer = new AssemblyTrace_RV32_Printer();
-		break;
-	case InstructionTrace_RV32IM_Zicsr:
-		printer = new InstructionTrace_RV32IM_Zicsr_Printer();
 		break;
 	case AssemblyTrace_RV64:
 		printer = new AssemblyTrace_RV64_Printer();
 		break;
+	case CV32E40P:
+		printer = new CV32E40P_Printer();
+		break;
 	case CVA6:
 		printer = new CVA6_Printer();
 		break;
+	case InstructionTrace_RV32IM_Zicsr:
+		printer = new InstructionTrace_RV32IM_Zicsr_Printer();
+		break;
 	case InstructionTrace_RV64IMF_Zicsr:
 		printer = new InstructionTrace_RV64IMF_Zicsr_Printer();
+		break;
+	case RV32_OOO:
+		printer = new RV32_OOO_Printer();
 		break;
 
     default: printer = nullptr;
