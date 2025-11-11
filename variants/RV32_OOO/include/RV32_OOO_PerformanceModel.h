@@ -57,13 +57,13 @@ public:
   uint64_t IF_stage = 0;
   uint64_t IS_stage = 0;
   uint64_t EX_stage_div_NoB = 0;
-  uint64_t EX_stage_mul0 = 0;
-  uint64_t EX_stage_mul1 = 0;
+  uint64_t EX_stage_mul0v_NoB = 0;
+  uint64_t EX_stage_mul1v_NoB = 0;
   uint64_t EX_stage_br_NoB = 0;
   uint64_t EX_stage_alu_NoB = 0;
-  uint64_t EX_stage_lu0 = 0;
-  uint64_t EX_stage_lu1 = 0;
-  uint64_t EX_stage_su = 0;
+  uint64_t EX_stage_lu0v_NoB = 0;
+  uint64_t EX_stage_lu1v_NoB = 0;
+  uint64_t EX_stage_suv_NoB = 0;
 
   // Multi-Element Timing Variables
   MultiElementTimingVariable IB_stage_OoO;

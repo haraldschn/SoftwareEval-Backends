@@ -62,7 +62,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -76,7 +76,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -134,7 +134,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -148,7 +148,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -206,7 +206,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -220,7 +220,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -278,7 +278,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -292,7 +292,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -350,7 +350,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -364,7 +364,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -422,7 +422,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -436,7 +436,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -494,7 +494,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -508,7 +508,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -566,7 +566,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -580,7 +580,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -638,7 +638,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -652,7 +652,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -710,7 +710,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -724,7 +724,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -782,7 +782,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -793,7 +793,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -850,7 +850,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -861,7 +861,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -918,7 +918,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -929,7 +929,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -986,7 +986,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -997,7 +997,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1054,7 +1054,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1065,7 +1065,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1122,7 +1122,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1133,7 +1133,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1190,7 +1190,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1201,7 +1201,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1258,7 +1258,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1269,7 +1269,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1326,7 +1326,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1337,7 +1337,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1394,14 +1394,14 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1457,14 +1457,14 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ALU
 uint64_t n_ALU;
 n_ALU = n_IB_stage_OoO + 1;
@@ -1520,7 +1520,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_mul(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1533,18 +1533,17 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_mul0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // MUL0
 uint64_t n_MUL0;
 n_MUL0 = n_IB_stage_OoO + 1;
-// EX_stage_mul0
-uint64_t n_EX_stage_mul0;
-n_EX_stage_mul0 = std::max({n_MUL0, perfModel->EX_stage_mul1});
-perfModel->EX_stage_mul0 = n_EX_stage_mul0;
+// EX_stage_mul0v_NoB
+uint64_t n_EX_stage_mul0v_NoB = n_MUL0;
+perfModel->EX_stage_mul0v_NoB = n_EX_stage_mul0v_NoB;
 // MUL1
 uint64_t n_MUL1;
-n_MUL1 = n_EX_stage_mul0 + 1;
+n_MUL1 = n_EX_stage_mul0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_MUL1);
 perfModel->clobberModel.setCb_inRd(n_MUL1);
 perfModel->clobberModel.setCb_inR1(n_MUL1);
@@ -1552,7 +1551,7 @@ perfModel->clobberModel.setCb_inR2(n_MUL1);
 // EX_stage_mul_NoB
 uint64_t n_EX_stage_mul_NoB = n_MUL1;
 perfModel->EX_stage_mul_NoB.set(n_EX_stage_mul_NoB);
-perfModel->EX_stage_mul1 = n_EX_stage_mul_NoB;
+perfModel->EX_stage_mul1v_NoB = n_EX_stage_mul_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_mul_NoB + 1;
@@ -1600,7 +1599,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_mul(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1613,18 +1612,17 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_mul0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // MUL0
 uint64_t n_MUL0;
 n_MUL0 = n_IB_stage_OoO + 1;
-// EX_stage_mul0
-uint64_t n_EX_stage_mul0;
-n_EX_stage_mul0 = std::max({n_MUL0, perfModel->EX_stage_mul1});
-perfModel->EX_stage_mul0 = n_EX_stage_mul0;
+// EX_stage_mul0v_NoB
+uint64_t n_EX_stage_mul0v_NoB = n_MUL0;
+perfModel->EX_stage_mul0v_NoB = n_EX_stage_mul0v_NoB;
 // MUL1
 uint64_t n_MUL1;
-n_MUL1 = n_EX_stage_mul0 + 1;
+n_MUL1 = n_EX_stage_mul0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_MUL1);
 perfModel->clobberModel.setCb_inRd(n_MUL1);
 perfModel->clobberModel.setCb_inR1(n_MUL1);
@@ -1632,7 +1630,7 @@ perfModel->clobberModel.setCb_inR2(n_MUL1);
 // EX_stage_mul_NoB
 uint64_t n_EX_stage_mul_NoB = n_MUL1;
 perfModel->EX_stage_mul_NoB.set(n_EX_stage_mul_NoB);
-perfModel->EX_stage_mul1 = n_EX_stage_mul_NoB;
+perfModel->EX_stage_mul1v_NoB = n_EX_stage_mul_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_mul_NoB + 1;
@@ -1680,7 +1678,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_mul(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1693,18 +1691,17 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_mul0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // MUL0
 uint64_t n_MUL0;
 n_MUL0 = n_IB_stage_OoO + 1;
-// EX_stage_mul0
-uint64_t n_EX_stage_mul0;
-n_EX_stage_mul0 = std::max({n_MUL0, perfModel->EX_stage_mul1});
-perfModel->EX_stage_mul0 = n_EX_stage_mul0;
+// EX_stage_mul0v_NoB
+uint64_t n_EX_stage_mul0v_NoB = n_MUL0;
+perfModel->EX_stage_mul0v_NoB = n_EX_stage_mul0v_NoB;
 // MUL1
 uint64_t n_MUL1;
-n_MUL1 = n_EX_stage_mul0 + 1;
+n_MUL1 = n_EX_stage_mul0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_MUL1);
 perfModel->clobberModel.setCb_inRd(n_MUL1);
 perfModel->clobberModel.setCb_inR1(n_MUL1);
@@ -1712,7 +1709,7 @@ perfModel->clobberModel.setCb_inR2(n_MUL1);
 // EX_stage_mul_NoB
 uint64_t n_EX_stage_mul_NoB = n_MUL1;
 perfModel->EX_stage_mul_NoB.set(n_EX_stage_mul_NoB);
-perfModel->EX_stage_mul1 = n_EX_stage_mul_NoB;
+perfModel->EX_stage_mul1v_NoB = n_EX_stage_mul_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_mul_NoB + 1;
@@ -1760,7 +1757,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_mul(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1773,18 +1770,17 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_mul0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // MUL0
 uint64_t n_MUL0;
 n_MUL0 = n_IB_stage_OoO + 1;
-// EX_stage_mul0
-uint64_t n_EX_stage_mul0;
-n_EX_stage_mul0 = std::max({n_MUL0, perfModel->EX_stage_mul1});
-perfModel->EX_stage_mul0 = n_EX_stage_mul0;
+// EX_stage_mul0v_NoB
+uint64_t n_EX_stage_mul0v_NoB = n_MUL0;
+perfModel->EX_stage_mul0v_NoB = n_EX_stage_mul0v_NoB;
 // MUL1
 uint64_t n_MUL1;
-n_MUL1 = n_EX_stage_mul0 + 1;
+n_MUL1 = n_EX_stage_mul0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_MUL1);
 perfModel->clobberModel.setCb_inRd(n_MUL1);
 perfModel->clobberModel.setCb_inR1(n_MUL1);
@@ -1792,7 +1788,7 @@ perfModel->clobberModel.setCb_inR2(n_MUL1);
 // EX_stage_mul_NoB
 uint64_t n_EX_stage_mul_NoB = n_MUL1;
 perfModel->EX_stage_mul_NoB.set(n_EX_stage_mul_NoB);
-perfModel->EX_stage_mul1 = n_EX_stage_mul_NoB;
+perfModel->EX_stage_mul1v_NoB = n_EX_stage_mul_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_mul_NoB + 1;
@@ -1840,7 +1836,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_div(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1854,7 +1850,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DIV
 uint64_t n_DIV;
 n_DIV = n_IB_stage_OoO + 4;
@@ -1912,7 +1908,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_div(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1926,7 +1922,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DIV
 uint64_t n_DIV;
 n_DIV = n_IB_stage_OoO + 4;
@@ -1984,7 +1980,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_div(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -1998,7 +1994,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DIV
 uint64_t n_DIV;
 n_DIV = n_IB_stage_OoO + 4;
@@ -2056,7 +2052,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_div(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2070,7 +2066,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DIV
 uint64_t n_DIV;
 n_DIV = n_IB_stage_OoO + 4;
@@ -2128,7 +2124,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2139,7 +2135,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // CSR
 uint64_t n_CSR;
 n_CSR = n_IB_stage_OoO + 1;
@@ -2195,7 +2191,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2206,7 +2202,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // CSR
 uint64_t n_CSR;
 n_CSR = n_IB_stage_OoO + 1;
@@ -2262,7 +2258,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2273,7 +2269,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // CSR
 uint64_t n_CSR;
 n_CSR = n_IB_stage_OoO + 1;
@@ -2329,14 +2325,14 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // CSR
 uint64_t n_CSR;
 n_CSR = n_IB_stage_OoO + 1;
@@ -2392,14 +2388,14 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // CSR
 uint64_t n_CSR;
 n_CSR = n_IB_stage_OoO + 1;
@@ -2455,14 +2451,14 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_alu(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // CSR
 uint64_t n_CSR;
 n_CSR = n_IB_stage_OoO + 1;
@@ -2515,7 +2511,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_st(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2528,8 +2524,8 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_su});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DPort_W
 uint64_t n_DPort_W;
 n_DPort_W = n_IB_stage_OoO + 1;
@@ -2538,7 +2534,7 @@ perfModel->clobberModel.setCb_inR2(n_DPort_W);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_W;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_su = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_suv_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -2583,7 +2579,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_st(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2596,8 +2592,8 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_su});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DPort_W
 uint64_t n_DPort_W;
 n_DPort_W = n_IB_stage_OoO + 1;
@@ -2606,7 +2602,7 @@ perfModel->clobberModel.setCb_inR2(n_DPort_W);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_W;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_su = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_suv_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -2651,7 +2647,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_st(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2664,8 +2660,8 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue, perfModel->EX_stage_su});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // DPort_W
 uint64_t n_DPort_W;
 n_DPort_W = n_IB_stage_OoO + 1;
@@ -2674,7 +2670,7 @@ perfModel->clobberModel.setCb_inR2(n_DPort_W);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_W;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_su = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_suv_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -2722,7 +2718,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_ld(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2732,24 +2728,23 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue, perfModel->EX_stage_lu0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // LSU
 uint64_t n_LSU;
 n_LSU = n_IB_stage_OoO + 1;
-// EX_stage_lu0
-uint64_t n_EX_stage_lu0;
-n_EX_stage_lu0 = std::max({n_LSU, perfModel->EX_stage_lu1});
-perfModel->EX_stage_lu0 = n_EX_stage_lu0;
+// EX_stage_lu0v_NoB
+uint64_t n_EX_stage_lu0v_NoB = n_LSU;
+perfModel->EX_stage_lu0v_NoB = n_EX_stage_lu0v_NoB;
 // DPort_R
 uint64_t n_DPort_R;
-n_DPort_R = n_EX_stage_lu0 + 1;
+n_DPort_R = n_EX_stage_lu0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_DPort_R);
 perfModel->clobberModel.setCb_inRd(n_DPort_R);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_R;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_lu1 = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_lu1v_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -2797,7 +2792,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_ld(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2807,24 +2802,23 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue, perfModel->EX_stage_lu0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // LSU
 uint64_t n_LSU;
 n_LSU = n_IB_stage_OoO + 1;
-// EX_stage_lu0
-uint64_t n_EX_stage_lu0;
-n_EX_stage_lu0 = std::max({n_LSU, perfModel->EX_stage_lu1});
-perfModel->EX_stage_lu0 = n_EX_stage_lu0;
+// EX_stage_lu0v_NoB
+uint64_t n_EX_stage_lu0v_NoB = n_LSU;
+perfModel->EX_stage_lu0v_NoB = n_EX_stage_lu0v_NoB;
 // DPort_R
 uint64_t n_DPort_R;
-n_DPort_R = n_EX_stage_lu0 + 1;
+n_DPort_R = n_EX_stage_lu0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_DPort_R);
 perfModel->clobberModel.setCb_inRd(n_DPort_R);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_R;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_lu1 = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_lu1v_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -2872,7 +2866,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_ld(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2882,24 +2876,23 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue, perfModel->EX_stage_lu0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // LSU
 uint64_t n_LSU;
 n_LSU = n_IB_stage_OoO + 1;
-// EX_stage_lu0
-uint64_t n_EX_stage_lu0;
-n_EX_stage_lu0 = std::max({n_LSU, perfModel->EX_stage_lu1});
-perfModel->EX_stage_lu0 = n_EX_stage_lu0;
+// EX_stage_lu0v_NoB
+uint64_t n_EX_stage_lu0v_NoB = n_LSU;
+perfModel->EX_stage_lu0v_NoB = n_EX_stage_lu0v_NoB;
 // DPort_R
 uint64_t n_DPort_R;
-n_DPort_R = n_EX_stage_lu0 + 1;
+n_DPort_R = n_EX_stage_lu0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_DPort_R);
 perfModel->clobberModel.setCb_inRd(n_DPort_R);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_R;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_lu1 = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_lu1v_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -2947,7 +2940,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_ld(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -2957,24 +2950,23 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue, perfModel->EX_stage_lu0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // LSU
 uint64_t n_LSU;
 n_LSU = n_IB_stage_OoO + 1;
-// EX_stage_lu0
-uint64_t n_EX_stage_lu0;
-n_EX_stage_lu0 = std::max({n_LSU, perfModel->EX_stage_lu1});
-perfModel->EX_stage_lu0 = n_EX_stage_lu0;
+// EX_stage_lu0v_NoB
+uint64_t n_EX_stage_lu0v_NoB = n_LSU;
+perfModel->EX_stage_lu0v_NoB = n_EX_stage_lu0v_NoB;
 // DPort_R
 uint64_t n_DPort_R;
-n_DPort_R = n_EX_stage_lu0 + 1;
+n_DPort_R = n_EX_stage_lu0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_DPort_R);
 perfModel->clobberModel.setCb_inRd(n_DPort_R);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_R;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_lu1 = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_lu1v_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -3022,7 +3014,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_ld(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3032,24 +3024,23 @@ uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
-n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue, perfModel->EX_stage_lu0});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_Issue});
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // LSU
 uint64_t n_LSU;
 n_LSU = n_IB_stage_OoO + 1;
-// EX_stage_lu0
-uint64_t n_EX_stage_lu0;
-n_EX_stage_lu0 = std::max({n_LSU, perfModel->EX_stage_lu1});
-perfModel->EX_stage_lu0 = n_EX_stage_lu0;
+// EX_stage_lu0v_NoB
+uint64_t n_EX_stage_lu0v_NoB = n_LSU;
+perfModel->EX_stage_lu0v_NoB = n_EX_stage_lu0v_NoB;
 // DPort_R
 uint64_t n_DPort_R;
-n_DPort_R = n_EX_stage_lu0 + 1;
+n_DPort_R = n_EX_stage_lu0v_NoB + 1;
 perfModel->scheduleModel.setXd(n_DPort_R);
 perfModel->clobberModel.setCb_inRd(n_DPort_R);
 // EX_stage_lsu_NoB
 uint64_t n_EX_stage_lsu_NoB = n_DPort_R;
 perfModel->EX_stage_lsu_NoB.set(n_EX_stage_lsu_NoB);
-perfModel->EX_stage_lu1 = n_EX_stage_lsu_NoB;
+perfModel->EX_stage_lu1v_NoB = n_EX_stage_lsu_NoB;
 // WB
 uint64_t n_WB;
 n_WB = n_EX_stage_lsu_NoB + 1;
@@ -3094,7 +3085,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_br(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3108,7 +3099,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3162,7 +3153,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_br(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3176,7 +3167,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3230,7 +3221,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_br(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3244,7 +3235,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3298,7 +3289,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_br(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3312,7 +3303,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3366,7 +3357,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_br(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3380,7 +3371,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3434,7 +3425,7 @@ n_Decoder = n_IF_stage + 1;
 perfModel->scheduleModel.setDec_br(n_Decoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_Decoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_OF_A
 uint64_t n_uA_OF_A;
@@ -3448,7 +3439,7 @@ n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO;
 n_IB_stage_OoO = std::max({n_uA_OF_A, n_uA_OF_B, n_uA_Issue});
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3536,14 +3527,14 @@ perfModel->noBranchPredModel.setPc_np(n_JumpDecoder);
 perfModel->scheduleModel.setDec_br(n_JumpDecoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_JumpDecoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_JumpDecoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;
@@ -3602,14 +3593,14 @@ perfModel->noBranchPredModel.setPc_np(n_JumpDecoder);
 perfModel->scheduleModel.setDec_br(n_JumpDecoder);
 // IS_stage
 uint64_t n_IS_stage;
-n_IS_stage = std::max({n_JumpDecoder, perfModel->IB_stage_OoO.get(4)});
+n_IS_stage = std::max({n_JumpDecoder, perfModel->IB_stage_OoO.get_min()});
 perfModel->IS_stage = n_IS_stage;
 // uA_Issue
 uint64_t n_uA_Issue;
 n_uA_Issue = std::max({n_IS_stage, perfModel->scheduleModel.getT_issue()});
 // IB_stage_OoO
 uint64_t n_IB_stage_OoO = n_uA_Issue;
-perfModel->IB_stage_OoO.set(n_IB_stage_OoO);
+perfModel->IB_stage_OoO.replace_min(n_IB_stage_OoO);
 // ADD
 uint64_t n_ADD;
 n_ADD = n_IB_stage_OoO + 1;

@@ -45,6 +45,28 @@ uint64_t MultiElementTimingVariable::get(int depth_)
   return fifo[index];
 }
 
+void MultiElementTimingVariable::replace_min(uint64_t value_) 
+{
+  uint64_t min_idx = 0;
+  for (int i = 0; i < NUM_ELEMENTS; i++)
+  {
+    min_idx = (fifo[i] < fifo[min_idx]) ? i : min_idx;
+  }
+  fifo[min_idx] = value_;
+}
+
+// Need for "reorder" buffer .get_min() (instead of .get(k) in max function)
+// Needs a different TimingVariable approach, the set() function needs to replace min value in the buffer()
+uint64_t MultiElementTimingVariable::get_min()
+{ 
+  uint64_t min_idx = 0;
+  for (int i = 0; i < NUM_ELEMENTS; i++)
+  {
+    min_idx = (fifo[i] < fifo[min_idx]) ? i : min_idx;
+  }
+  return fifo[min_idx];
+}
+
 PerformanceModel::PerformanceModel(std::string name_, SchedulingFunctionSet* schedulingFunctionSet_) : name(name_), schedulingFunctionSet(schedulingFunctionSet_)
 {
     schedulingFunctionSet->foreach([this](SchedulingFunction &func)

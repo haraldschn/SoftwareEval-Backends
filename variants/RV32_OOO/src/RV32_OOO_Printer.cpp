@@ -39,6 +39,7 @@ void RV32_OOO_Printer::connectChannel(Channel* ch_)
   rs2_ptr = channel->rs2;
   rd_ptr = channel->rd;
   pc_ptr = channel->pc;
+  addr_ptr = channel->addr;
 }
 
 std::string RV32_OOO_Printer::getPrintHeader(void)
@@ -48,6 +49,7 @@ std::string RV32_OOO_Printer::getPrintHeader(void)
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "rs2" << " | ";
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "rd" << " | ";
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "pc" << " | ";
+  caption_strs << std::setfill(' ') << std::setw(18) << std::left << "addr" << " | ";
   caption_strs << std::endl;
 
   return caption_strs.str();

@@ -37,6 +37,9 @@ public:
 
   void set(uint64_t);
   uint64_t get(int);
+
+  void replace_min(uint64_t);
+  uint64_t get_min();
     
 private:
   const int NUM_ELEMENTS;

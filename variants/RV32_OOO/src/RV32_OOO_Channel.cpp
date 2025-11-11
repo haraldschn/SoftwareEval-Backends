@@ -37,5 +37,9 @@ void *RV32_OOO_Channel::getTraceValueHook(std::string trVal_)
   {
     return pc;
   }
+  if(trVal_ == "addr")
+  {
+    return addr;
+  }
   return nullptr;
 }

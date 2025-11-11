@@ -47,6 +47,7 @@ void RV32_OOO_PerformanceModel::connectChannel(Channel* channel_)
   scheduleModel.rs1_ptr = channel->rs1;
   scheduleModel.rs2_ptr = channel->rs2;
   scheduleModel.rd_ptr = channel->rd;
+  scheduleModel.addr_ptr = channel->addr;
 
 }
 
@@ -60,14 +61,14 @@ uint64_t RV32_OOO_PerformanceModel::getCycleCount(void)
     ,IB_stage_OoO.get(1)
     ,EX_stage_div_NoB
     ,EX_stage_mul_NoB.get(1)
-    ,EX_stage_mul0
-    ,EX_stage_mul1
+    ,EX_stage_mul0v_NoB
+    ,EX_stage_mul1v_NoB
     ,EX_stage_br_NoB
     ,EX_stage_alu_NoB
     ,EX_stage_lsu_NoB.get(1)
-    ,EX_stage_lu0
-    ,EX_stage_lu1
-    ,EX_stage_su
+    ,EX_stage_lu0v_NoB
+    ,EX_stage_lu1v_NoB
+    ,EX_stage_suv_NoB
     ,WB_stage_NoB.get(1)
   });
 }
