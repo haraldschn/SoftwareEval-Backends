@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "models/rv32_4issue/Scheduler.h"
+#include "models/soomrv/Scheduler.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue {
+namespace soomrv {
 
 int Scheduler::getDelay(void) {
     // DELAY for LD and ALU Stages
@@ -175,4 +175,4 @@ void Scheduler::setCOM_Alu(uint64_t c_) {
     instr_type = ALU_Type::EMPTY;
 };
 
-}  // namespace rv32_4issue
+}  // namespace soomrv

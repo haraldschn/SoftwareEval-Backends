@@ -30,13 +30,13 @@ class Factory
 {
 private:
   enum var_t { 
-	CV32E40P,
 	AssemblyTrace_RV32,
-	InstructionTrace_RV32IM_Zicsr,
 	AssemblyTrace_RV64,
+	CV32E40P,
 	CVA6,
+	InstructionTrace_RV32IM_Zicsr,
 	InstructionTrace_RV64IMF_Zicsr,
-	RV32_4ISSUE 
+	SOOMRV
   };
 public:
   int getVariantHandle(std::string);

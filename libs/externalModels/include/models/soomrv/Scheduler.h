@@ -16,8 +16,8 @@
 
 // TODO: OoO Scheduler - External Model to allow OoO Issue (i.e. process from Issue Queue -> LD -> EX)
 
-#ifndef RV32_4ISSUE_SCHEDULER_MODEL_H
-#define RV32_4ISSUE_SCHEDULER_MODEL_H
+#ifndef SOOMRV_SCHEDULER_MODEL_H
+#define SOOMRV_SCHEDULER_MODEL_H
 
 #include <stdbool.h>
 #include <cstdint>
@@ -25,7 +25,7 @@
 
 #include "PerformanceModel.h"
 
-namespace rv32_4issue {
+namespace soomrv {
 
 enum ALU_Type {
     EMPTY,
@@ -78,6 +78,6 @@ class Scheduler : public ResourceModel {
     uint64_t alu_avail[3] = {0, 0, 0};
 };
 
-}  // namespace rv32_4issue
+}  // namespace soomrv
 
-#endif  // RV32_4ISSUE_SCHEDULER_MODEL_H
+#endif  // SOOMRV_SCHEDULER_MODEL_H

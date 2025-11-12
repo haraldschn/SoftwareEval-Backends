@@ -17,13 +17,13 @@
 // TODO: Proof-of-concept model!
 // Only considers non-compressed instructions
 
-#include "models/rv32_4issue/FetchAligner.h"
+#include "models/soomrv/FetchAligner.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue {
+namespace soomrv {
 
 // int FetchAligner::getDelay(void) {
 //     return 1;
@@ -58,4 +58,4 @@ uint64_t FetchAligner::getPCGen_out(void) {
     return IF_start_next + fetch_delay; 
 }
 
-}  // namespace rv32_4issue
+}  // namespace soomrv

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "models/rv32_4issue/StaticBranchPredictModel.h"
+#include "models/soomrv/StaticBranchPredictModel.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue{
+namespace soomrv{
 
 void StaticBranchPredictModel::setPc_p(uint64_t pc_p_)
 {
@@ -119,4 +119,4 @@ std::string StaticBranchPredictModel::getInfoStream()
 }
 
     
-} // namespace rv32_4issue
+} // namespace soomrv

@@ -17,8 +17,8 @@
 /********************* AUTO GENERATE FILE (create by M2-ISA-R::Trace-Generator) *********************/
 
                    
-#ifndef SWEVAL_BACKENDS_RV32_4ISSUE_PRINTER_H
-#define SWEVAL_BACKENDS_RV32_4ISSUE_PRINTER_H
+#ifndef SWEVAL_BACKENDS_SOOMRV_PRINTER_H
+#define SWEVAL_BACKENDS_SOOMRV_PRINTER_H
 
 #include "Printer.h"
 
@@ -27,11 +27,11 @@
 #include <string>
 #include <cstdint>
 
-class RV32_4ISSUE_Printer : public Printer
+class SOOMRV_Printer : public Printer
 {
 public:
 
-  RV32_4ISSUE_Printer();
+  SOOMRV_Printer();
 
   virtual void connectChannel(Channel*);
   virtual std::string getPrintHeader(void);
@@ -55,4 +55,4 @@ private:
   uint64_t* addr_ptr;
 };
 
-#endif // SWEVAL_BACKENDS_RV32_4ISSUE_PRINTER_H
+#endif // SWEVAL_BACKENDS_SOOMRV_PRINTER_H

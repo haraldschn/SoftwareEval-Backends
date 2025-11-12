@@ -17,8 +17,8 @@
 /********************* AUTO GENERATE FILE (create by M2-ISA-R-Perf) *********************/
 
 
-#ifndef SWEVAL_BACKENDS_RV32_4ISSUE_PERFORMANCE_MODEL_H
-#define SWEVAL_BACKENDS_RV32_4ISSUE_PERFORMANCE_MODEL_H
+#ifndef SWEVAL_BACKENDS_SOOMRV_PERFORMANCE_MODEL_H
+#define SWEVAL_BACKENDS_SOOMRV_PERFORMANCE_MODEL_H
 
 #include <stdbool.h>
 #include <string>
@@ -27,22 +27,22 @@
 #include "PerformanceModel.h"
 #include "Channel.h"
 
-#include "models/rv32_4issue/RegisterModel.h"
-#include "models/rv32_4issue/BranchPredictionModel.h"
-#include "models/rv32_4issue/ICacheModel.h"
-#include "models/rv32_4issue/DCacheModel.h"
-#include "models/rv32_4issue/FetchAligner.h"
-#include "models/rv32_4issue/Scheduler.h"
+#include "models/soomrv/RegisterModel.h"
+#include "models/soomrv/BranchPredictionModel.h"
+#include "models/soomrv/ICacheModel.h"
+#include "models/soomrv/DCacheModel.h"
+#include "models/soomrv/FetchAligner.h"
+#include "models/soomrv/Scheduler.h"
 
-namespace RV32_4ISSUE{
+namespace SOOMRV{
 
-extern SchedulingFunctionSet* RV32_4ISSUE_SchedulingFunctionSet;
+extern SchedulingFunctionSet* SOOMRV_SchedulingFunctionSet;
 
-class RV32_4ISSUE_PerformanceModel : public PerformanceModel
+class SOOMRV_PerformanceModel : public PerformanceModel
 {
 public:
 
-  RV32_4ISSUE_PerformanceModel() : PerformanceModel("RV32_4ISSUE", RV32_4ISSUE_SchedulingFunctionSet)
+  SOOMRV_PerformanceModel() : PerformanceModel("SOOMRV", SOOMRV_SchedulingFunctionSet)
     ,IF_stage(16,0)
     ,PC_substage(4,0)
     ,IF_substage_0(4,0)
@@ -90,12 +90,12 @@ public:
   MultiElementTimingVariable COM_stage;
 
   // External Resource Models
-  rv32_4issue::RegisterModel regModel;
-  rv32_4issue::BranchPredictionModel dynBranchPredModel;
-  rv32_4issue::ICacheModel iCacheModel;
-  rv32_4issue::DCacheModel dCacheModel;
-  rv32_4issue::FetchAligner fetchAligner;
-  rv32_4issue::Scheduler schedModel;
+  soomrv::RegisterModel regModel;
+  soomrv::BranchPredictionModel dynBranchPredModel;
+  soomrv::ICacheModel iCacheModel;
+  soomrv::DCacheModel dCacheModel;
+  soomrv::FetchAligner fetchAligner;
+  soomrv::Scheduler schedModel;
 
   virtual void connectChannel(Channel*);
   virtual uint64_t getCycleCount(void);
@@ -104,6 +104,6 @@ public:
 
 };
 
-} // namespace RV32_4ISSUE
+} // namespace SOOMRV
 
-#endif // SWEVAL_BACKENDS_RV32_4ISSUE_PERFORMANCE_MODEL_H
+#endif // SWEVAL_BACKENDS_SOOMRV_PERFORMANCE_MODEL_H

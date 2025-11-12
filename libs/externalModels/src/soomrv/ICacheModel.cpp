@@ -16,13 +16,13 @@
 
 // TODO: Proof-of-concept model, taken from Robert (more or less)!
 
-#include "models/rv32_4issue/ICacheModel.h"
+#include "models/soomrv/ICacheModel.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue {
+namespace soomrv {
 
 int ICacheModel::getDelay(void) {
     uint64_t pc = pc_ptr[getInstrIndex()];
@@ -107,4 +107,4 @@ std::string ICacheModel::getInfoStream() {
     return ret_strs.str();
 }
 
-}  // namespace rv32_4issue
+}  // namespace soomrv

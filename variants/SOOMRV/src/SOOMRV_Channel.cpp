@@ -17,31 +17,37 @@
 /********************* AUTO GENERATE FILE (create by M2-ISA-R::Trace-Generator) *********************/
 
 
-#ifndef SWEVAL_BACKENDS_RV32_4ISSUE_CHANNEL_H
-#define SWEVAL_BACKENDS_RV32_4ISSUE_CHANNEL_H
+#include "SOOMRV_Channel.h"
 
-#include "Channel.h"
-
-#include <string>
-#include <stdbool.h>
-#include <cstdint>
-
-class RV32_4ISSUE_Channel: public Channel
+void *SOOMRV_Channel::getTraceValueHook(std::string trVal_)
 {
-public:
-
-  RV32_4ISSUE_Channel() {};
-  ~RV32_4ISSUE_Channel() {};
-
-  uint64_t rs1 [100];
-  uint64_t rs2 [100];
-  uint64_t rd [100];
-  uint64_t pc [100];
-  uint64_t brTarget [100];
-  uint64_t imm [100];
-  uint64_t addr [100];
-
-  virtual void *getTraceValueHook(std::string);
-};
-
-#endif // SWEVAL_BACKENDS_RV32_4ISSUE_CHANNEL_H
+  if(trVal_ == "rs1")
+  {
+    return rs1;
+  }
+  if(trVal_ == "rs2")
+  {
+    return rs2;
+  }
+  if(trVal_ == "rd")
+  {
+    return rd;
+  }
+  if(trVal_ == "pc")
+  {
+    return pc;
+  }
+  if(trVal_ == "brTarget")
+  {
+    return brTarget;
+  }
+  if(trVal_ == "imm")
+  {
+    return imm;
+  }
+  if(trVal_ == "addr")
+  {
+    return addr;
+  }
+  return nullptr;
+}

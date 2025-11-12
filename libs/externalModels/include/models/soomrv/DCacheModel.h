@@ -16,8 +16,8 @@
 
 // TODO: Proof-of-concept model, taken from Robert (more or less)!
 
-#ifndef RV32_4ISSUE_D_CACHE_MODEL_H
-#define RV32_4ISSUE_D_CACHE_MODEL_H
+#ifndef SOOMRV_D_CACHE_MODEL_H
+#define SOOMRV_D_CACHE_MODEL_H
 
 #include <stdbool.h>
 #include <cstdint>
@@ -34,7 +34,7 @@
 #define DCACHE_SIZE (2 << DCACHE_SIZE_LINES)  // 2 << 8 = 256
 #define DCACHE_LINE_SIZE ((2 << DCACHE_LINE_BYTES) * 8)
 
-namespace rv32_4issue {
+namespace soomrv {
 
 struct DCacheEntry {
     uint64_t tag = 0;
@@ -82,6 +82,6 @@ class DCacheModel : public ResourceModel {
     const uint64_t DCACHE_TAG_MASK = (~((DCACHE_SIZE * (2 << DCACHE_LINE_BYTES)) - 1)); // ~0xFFFF = 0xFFFF0000
 };
 
-}  // namespace rv32_4issue
+}  // namespace soomrv
 
-#endif  // RV32_4ISSUE_D_CACHE_MODEL_H
+#endif  // SOOMRV_D_CACHE_MODEL_H

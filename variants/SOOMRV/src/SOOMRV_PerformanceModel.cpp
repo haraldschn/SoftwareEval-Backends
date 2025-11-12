@@ -17,7 +17,7 @@
 /********************* AUTO GENERATE FILE (create by M2-ISA-R-Perf) *********************/
 
 
-#include "RV32_4ISSUE_PerformanceModel.h"
+#include "SOOMRV_PerformanceModel.h"
 
 #include <stdbool.h>
 #include <string>
@@ -26,20 +26,20 @@
 
 #include "Channel.h"
 
-#include "RV32_4ISSUE_Channel.h"
+#include "SOOMRV_Channel.h"
 
-#include "models/rv32_4issue/RegisterModel.h"
-#include "models/rv32_4issue/BranchPredictionModel.h"
-#include "models/rv32_4issue/ICacheModel.h"
-#include "models/rv32_4issue/DCacheModel.h"
-#include "models/rv32_4issue/FetchAligner.h"
-#include "models/rv32_4issue/Scheduler.h"
+#include "models/soomrv/RegisterModel.h"
+#include "models/soomrv/BranchPredictionModel.h"
+#include "models/soomrv/ICacheModel.h"
+#include "models/soomrv/DCacheModel.h"
+#include "models/soomrv/FetchAligner.h"
+#include "models/soomrv/Scheduler.h"
 
-namespace RV32_4ISSUE{
+namespace SOOMRV{
 
-void RV32_4ISSUE_PerformanceModel::connectChannel(Channel* channel_)
+void SOOMRV_PerformanceModel::connectChannel(Channel* channel_)
 {
-  RV32_4ISSUE_Channel* channel = static_cast<RV32_4ISSUE_Channel*>(channel_);
+  SOOMRV_Channel* channel = static_cast<SOOMRV_Channel*>(channel_);
 
   regModel.rs1_ptr = channel->rs1;
   regModel.rs2_ptr = channel->rs2;
@@ -64,7 +64,7 @@ void RV32_4ISSUE_PerformanceModel::connectChannel(Channel* channel_)
 
 }
 
-uint64_t RV32_4ISSUE_PerformanceModel::getCycleCount(void)
+uint64_t SOOMRV_PerformanceModel::getCycleCount(void)
 {
   
   return std::max({
@@ -87,7 +87,7 @@ uint64_t RV32_4ISSUE_PerformanceModel::getCycleCount(void)
   });
 }
 
-std::string RV32_4ISSUE_PerformanceModel::getPipelineStream(void)
+std::string SOOMRV_PerformanceModel::getPipelineStream(void)
 {
   std::stringstream ret_strs;
   ret_strs << entrancePoint;
@@ -110,7 +110,7 @@ std::string RV32_4ISSUE_PerformanceModel::getPipelineStream(void)
   return ret_strs.str();
 }
 
-std::string RV32_4ISSUE_PerformanceModel::getPrintHeader(void)
+std::string SOOMRV_PerformanceModel::getPrintHeader(void)
 {
   std::stringstream ret_strs;
   ret_strs << "Enter";
@@ -133,4 +133,4 @@ std::string RV32_4ISSUE_PerformanceModel::getPrintHeader(void)
   return ret_strs.str();
 }
 
-} // namespace RV32_4ISSUE
+} // namespace SOOMRV

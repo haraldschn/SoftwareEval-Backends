@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef RV32_4ISSUE_REGISTER_MODEL_H
-#define RV32_4ISSUE_REGISTER_MODEL_H
+#ifndef SOOMRV_REGISTER_MODEL_H
+#define SOOMRV_REGISTER_MODEL_H
 
 #include <cstdint>
 
 #include "PerformanceModel.h"
 
-namespace rv32_4issue{
+namespace soomrv{
 
 class RegisterModel : public ConnectorModel
 {
 public:
-  RegisterModel(PerformanceModel* parent_) : ConnectorModel("RegisterModel_RV32_4ISSUE", parent_) {};
+  RegisterModel(PerformanceModel* parent_) : ConnectorModel("RegisterModel_SOOMRV", parent_) {};
 
   uint64_t* rs1_ptr;
   uint64_t* rs2_ptr;
@@ -46,6 +46,6 @@ private:
   uint64_t registerModel [64] = {0};
 };
 
-} // namespace rv32_4issue
+} // namespace soomrv
   
-#endif //RV32_4ISSUE_REGISTER_PREDICT_MODEL_H
+#endif //SOOMRV_REGISTER_PREDICT_MODEL_H

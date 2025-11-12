@@ -16,8 +16,8 @@
 
 // TODO: Proof-of-concept model, align Fetches with 0x???????0, ..4 , ..8, ..C in same PC!
 
-#ifndef RV32_4ISSUE_FALIGN_MODEL_H
-#define RV32_4ISSUE_FALIGN_MODEL_H
+#ifndef SOOMRV_FALIGN_MODEL_H
+#define SOOMRV_FALIGN_MODEL_H
 
 #include <stdbool.h>
 #include <cstdint>
@@ -27,7 +27,7 @@
 
 #define INITIAL_PC 0x80000000
 
-namespace rv32_4issue {
+namespace soomrv {
 
 class FetchAligner : public ConnectorModel {
    public:
@@ -52,6 +52,6 @@ class FetchAligner : public ConnectorModel {
     const int UNALIGNED_DELAY;
 };
 
-}  // namespace rv32_4issue
+}  // namespace soomrv
 
-#endif  // RV32_4ISSUE_FALIGN_MODEL_H
+#endif  // SOOMRV_FALIGN_MODEL_H

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef RV32_4ISSUE_STATIC_BRANCH_PREDICT_MODEL_H
-#define RV32_4ISSUE_STATIC_BRANCH_PREDICT_MODEL_H
+#ifndef SOOMRV_STATIC_BRANCH_PREDICT_MODEL_H
+#define SOOMRV_STATIC_BRANCH_PREDICT_MODEL_H
 
 #include "PerformanceModel.h"
 
 #include <stdbool.h>
 #include <string>
 
-namespace rv32_4issue{
+namespace soomrv{
 
 class StaticBranchPredictModel : public ConnectorModel
 {
@@ -53,6 +53,6 @@ private:
     uint64_t pc_info = 0;
 };
 
-} //namespace rv32_4issue
+} //namespace soomrv
   
-#endif //RV32_4ISSUE_STATIC_BRANCH_PREDICT_MODEL_H
+#endif //SOOMRV_STATIC_BRANCH_PREDICT_MODEL_H

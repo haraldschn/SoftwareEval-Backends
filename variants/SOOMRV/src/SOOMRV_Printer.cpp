@@ -17,23 +17,23 @@
 /********************* AUTO GENERATE FILE (create by M2-ISA-R::Trace-Generator) *********************/
 
 
-#include "RV32_4ISSUE_Printer.h"
+#include "SOOMRV_Printer.h"
 
 #include "Printer.h"
 
-#include "RV32_4ISSUE_Channel.h"
+#include "SOOMRV_Channel.h"
 
 #include <iostream>
 #include <iomanip>
 
-extern InstructionPrinterSet* RV32_4ISSUE_InstrPrinterSet;
+extern InstructionPrinterSet* SOOMRV_InstrPrinterSet;
 
-RV32_4ISSUE_Printer::RV32_4ISSUE_Printer(): Printer("RV32_4ISSUE_Printer", RV32_4ISSUE_InstrPrinterSet)
+SOOMRV_Printer::SOOMRV_Printer(): Printer("SOOMRV_Printer", SOOMRV_InstrPrinterSet)
 {}
 
-void RV32_4ISSUE_Printer::connectChannel(Channel* ch_)
+void SOOMRV_Printer::connectChannel(Channel* ch_)
 {
-  RV32_4ISSUE_Channel* channel = static_cast<RV32_4ISSUE_Channel*>(ch_);
+  SOOMRV_Channel* channel = static_cast<SOOMRV_Channel*>(ch_);
   
   rs1_ptr = channel->rs1;
   rs2_ptr = channel->rs2;
@@ -44,7 +44,7 @@ void RV32_4ISSUE_Printer::connectChannel(Channel* ch_)
   addr_ptr = channel->addr;
 }
 
-std::string RV32_4ISSUE_Printer::getPrintHeader(void)
+std::string SOOMRV_Printer::getPrintHeader(void)
 {
   std::stringstream caption_strs;	
   caption_strs << std::setfill(' ') << std::setw(18) << std::left << "rs1" << " | ";

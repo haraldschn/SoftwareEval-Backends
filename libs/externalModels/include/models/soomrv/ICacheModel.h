@@ -16,8 +16,8 @@
 
 // TODO: Proof-of-concept model, taken from Robert (more or less)!
 
-#ifndef RV32_4ISSUE_I_CACHE_MODEL_H
-#define RV32_4ISSUE_I_CACHE_MODEL_H
+#ifndef SOOMRV_I_CACHE_MODEL_H
+#define SOOMRV_I_CACHE_MODEL_H
 
 #include <stdbool.h>
 #include <cstdint>
@@ -34,7 +34,7 @@
 #define ICACHE_SIZE (2 << ICACHE_SIZE_LINES)  // 2 << 8 = 256
 #define ICACHE_LINE_SIZE ((2 << ICACHE_LINE_BYTES) * 8)
 
-namespace rv32_4issue {
+namespace soomrv {
 
 struct ICacheEntry {
     uint64_t tag = 0;
@@ -80,6 +80,6 @@ class ICacheModel : public ResourceModel {
     int lfsr(void);
 };
 
-}  // namespace rv32_4issue
+}  // namespace soomrv
 
 #endif  // CVA6_I_CACHE_MODEL_H

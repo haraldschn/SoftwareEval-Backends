@@ -22,18 +22,18 @@
 
 #include "PerformanceModel.h"
 
-#include "RV32_4ISSUE_PerformanceModel.h"
+#include "SOOMRV_PerformanceModel.h"
 
-namespace RV32_4ISSUE{
+namespace SOOMRV{
 
-SchedulingFunctionSet* RV32_4ISSUE_SchedulingFunctionSet = new SchedulingFunctionSet("RV32_4ISSUE_SchedulingFunctionSet");
+SchedulingFunctionSet* SOOMRV_SchedulingFunctionSet = new SchedulingFunctionSet("SOOMRV_SchedulingFunctionSet");
 
 static SchedulingFunction *schedulingFunction_add = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "add",
   0,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -143,11 +143,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sub = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sub",
   1,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -257,11 +257,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_xor = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "xor",
   2,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -371,11 +371,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_or = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "or",
   3,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -485,11 +485,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_and = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "and",
   4,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -599,11 +599,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_slt = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "slt",
   5,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -713,11 +713,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sltu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sltu",
   6,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -827,11 +827,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sll = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sll",
   7,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -941,11 +941,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_srl = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "srl",
   8,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1055,11 +1055,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sra = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sra",
   9,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1169,11 +1169,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_addi = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "addi",
   10,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1280,11 +1280,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_xori = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "xori",
   11,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1391,11 +1391,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_ori = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "ori",
   12,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1502,11 +1502,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_andi = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "andi",
   13,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1613,11 +1613,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_slti = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "slti",
   14,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1724,11 +1724,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sltiu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sltiu",
   15,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1835,11 +1835,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_slli = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "slli",
   16,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -1946,11 +1946,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_srli = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "srli",
   17,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2057,11 +2057,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_srai = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "srai",
   18,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2168,11 +2168,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_auipc = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "auipc",
   19,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2276,11 +2276,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_lui = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "lui",
   20,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2384,11 +2384,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_mul = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "mul",
   21,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2498,11 +2498,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_mulh = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "mulh",
   22,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2612,11 +2612,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_mulhu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "mulhu",
   23,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2726,11 +2726,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_mulhsu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "mulhsu",
   24,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2840,11 +2840,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_div = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "div",
   25,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -2954,11 +2954,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_rem = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "rem",
   26,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3068,11 +3068,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_divu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "divu",
   27,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3182,11 +3182,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_remu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "remu",
   28,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3296,11 +3296,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_csrrw = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "csrrw",
   29,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3407,11 +3407,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_csrrs = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "csrrs",
   30,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3518,11 +3518,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_csrrc = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "csrrc",
   31,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3629,11 +3629,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_csrrwi = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "csrrwi",
   32,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3737,11 +3737,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_csrrsi = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "csrrsi",
   33,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3845,11 +3845,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_csrrci = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "csrrci",
   34,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -3953,11 +3953,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sb = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sb",
   35,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4067,11 +4067,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sh = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sh",
   36,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4181,11 +4181,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_sw = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "sw",
   37,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4295,11 +4295,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_lw = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "lw",
   38,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4403,11 +4403,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_lh = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "lh",
   39,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4511,11 +4511,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_lhu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "lhu",
   40,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4619,11 +4619,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_lb = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "lb",
   41,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4727,11 +4727,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_lbu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "lbu",
   42,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4835,11 +4835,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_beq = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "beq",
   43,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -4950,11 +4950,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_bne = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "bne",
   44,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5065,11 +5065,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_blt = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "blt",
   45,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5180,11 +5180,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_bge = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "bge",
   46,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5295,11 +5295,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_bltu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "bltu",
   47,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5410,11 +5410,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_bgeu = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "bgeu",
   48,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5525,11 +5525,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_jal = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "jal",
   49,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5634,11 +5634,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction_jalr = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "jalr",
   50,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5746,11 +5746,11 @@ perfModel->COM_stage.set(n_COM_stage);
 );
 
 static SchedulingFunction *schedulingFunction__def = new SchedulingFunction(
-  RV32_4ISSUE_SchedulingFunctionSet,
+  SOOMRV_SchedulingFunctionSet,
   "_def",
   51,
   [](PerformanceModel* perfModel_){
-  RV32_4ISSUE_PerformanceModel* perfModel = static_cast<RV32_4ISSUE_PerformanceModel*>(perfModel_);
+  SOOMRV_PerformanceModel* perfModel = static_cast<SOOMRV_PerformanceModel*>(perfModel_);
   // Enter
 uint64_t n_Enter;
 n_Enter = std::max({perfModel->IF_stage.get(16), perfModel->PC_substage.get(4)});
@@ -5793,4 +5793,4 @@ perfModel->IF_substage_1.set(n_IF_substage_1);
 );
 
 
-} // namespace RV32_4ISSUE
+} // namespace SOOMRV

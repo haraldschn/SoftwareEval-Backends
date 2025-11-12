@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "models/rv32_4issue/BranchPredictionModel.h"
+#include "models/soomrv/BranchPredictionModel.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue {
+namespace soomrv {
 
 // TODO: Find a better way to define this constant!?
 #define INVALID_BRANCH_ADDRESS 0xFFFFFFFFFFFFFFFF
@@ -315,4 +315,4 @@ std::string BranchPredictionModel::getInfoStream()
   return ret_strs.str();
 }
 
-}  // namespace rv32_4issue
+}  // namespace soomrv

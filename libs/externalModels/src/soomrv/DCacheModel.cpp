@@ -16,13 +16,13 @@
 
 // TODO: Proof-of-concept model, taken from Robert (more or less)!
 
-#include "models/rv32_4issue/DCacheModel.h"
+#include "models/soomrv/DCacheModel.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_4issue {
+namespace soomrv {
 
 int DCacheModel::getDelay(void) {
     uint64_t addr = addr_ptr[getInstrIndex()];
@@ -100,4 +100,4 @@ std::string DCacheModel::getInfoStream() {
     return ret_strs.str();
 }
 
-}  // namespace rv32_4issue
+}  // namespace soomrv

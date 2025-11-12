@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef RV32_4ISSUE_DYNAMIC_BRANCH_PREDICT_MODEL_H
-#define RV32_4ISSUE_DYNAMIC_BRANCH_PREDICT_MODEL_H
+#ifndef SOOMRV_DYNAMIC_BRANCH_PREDICT_MODEL_H
+#define SOOMRV_DYNAMIC_BRANCH_PREDICT_MODEL_H
 
 #include <stdbool.h>
 #include <array>
@@ -24,7 +24,7 @@
 
 #include "PerformanceModel.h"
 
-namespace rv32_4issue{
+namespace soomrv{
 
 class PredictFsm
 {
@@ -105,7 +105,7 @@ private:
 class BranchPredictionModel : public ConnectorModel
 {
 public:
-  BranchPredictionModel(PerformanceModel* parent_) : ConnectorModel("RV32_4ISSUE_BranchPredictionModel", parent_), bht(), btb(), ras() {};
+  BranchPredictionModel(PerformanceModel* parent_) : ConnectorModel("SOOMRV_BranchPredictionModel", parent_), bht(), btb(), ras() {};
    
   // API
   void setPc_p(uint64_t);
@@ -159,6 +159,6 @@ private:
   
 };
 
-} // namespace rv32_4issue
+} // namespace soomrv
   
-#endif //RV32_4ISSUE_DYNAMIC_BRANCH_PREDICT_MODEL_H
+#endif //SOOMRV_DYNAMIC_BRANCH_PREDICT_MODEL_H
