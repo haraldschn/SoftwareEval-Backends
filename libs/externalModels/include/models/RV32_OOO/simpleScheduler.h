@@ -20,7 +20,7 @@
 #include "PerformanceModel.h"
 #include <cstdint>
 
-namespace rv32_ooo {
+namespace RV32_OOO {
 
 // Functional Unit set at Decode stage
 enum F_Type {
@@ -68,6 +68,6 @@ class Scheduler : public ConnectorModel {
     
 };
 
-}  // namespace rv32_ooo
+}  // namespace RV32_OOO
 
 #endif  // RV32_OOO_SCHEDULER_H

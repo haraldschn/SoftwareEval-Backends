@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "models/rv32_ooo/simpleScheduler.h"
+#include "models/RV32_OOO/simpleScheduler.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_ooo{
+namespace RV32_OOO{
 
 void Scheduler::setDec_div(uint64_t x_) {
     instr_type = F_Type::DIV;
@@ -165,4 +165,4 @@ uint64_t Scheduler::getT_issue(void) {
 */
 
     
-} // namespace common
+} // namespace RV32_OOO

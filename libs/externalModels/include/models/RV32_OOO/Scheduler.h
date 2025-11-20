@@ -29,7 +29,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace rv32_ooo {
+namespace RV32_OOO {
 
 // Functional Unit set at Decode stage
 // (using enum F_Type as numeric value)
@@ -80,8 +80,10 @@ class DependencyGraph {
         uint64_t latency = 1;
         uint64_t t_LR = 0;
 
-        uint8_t a_k = 1; // parallel instructions in functional unit
-        uint8_t s_k = 1; // starting instruction per cycle
+        uint8_t a_k = 1;  // parallel instructions in functional unit
+        uint8_t s_k = 1;  // starting instruction per cycle
+
+        uint64_t rd = 0;
         // Vector of predecessor nodes
         std::vector<uint64_t> predc;
     };
@@ -103,7 +105,7 @@ class DependencyGraph {
         }
     };
 
-     // this is the structure which implements the
+    // this is the structure which implements the
     // operator overloading for Node comparision using std::greater
     struct CompareOpReady {
         bool operator()(const Node& a, const Node& b) {
@@ -137,7 +139,7 @@ class DependencyGraph {
 
     uint64_t add_node(F_Type type, uint64_t issue_ready, uint8_t a_k = 1, uint8_t s_k = 1) {
         Node node_new;
-        
+
         node_new.issue_ready = issue_ready;
 
         node_new.type = type;
@@ -146,7 +148,7 @@ class DependencyGraph {
         node_new.s_k = s_k;
 
         nodes.push_back(node_new);
-        uint64_t id = nodes.size()-1;
+        uint64_t id = nodes.size() - 1;
         nodes[id].id = id;
 
         ready_nodes.insert(id);
@@ -154,6 +156,11 @@ class DependencyGraph {
         add_edge_RAW(0, id);
 
         return id;
+    }
+
+    void set_node_rd(uint64_t id, u_int64_t rd) {
+        // std::cout << "set node id to rd:" << id << "(" << rd << ")\n";
+        nodes[id].rd = rd;
     }
 
     void add_edge_RAW(const uint64_t& from, const uint64_t& to) {
@@ -225,10 +232,10 @@ class DependencyGraph {
         return ans;
     }
 
-    uint64_t schedule(uint64_t curr_node, uint64_t t_curr) {
+    uint64_t schedule(uint64_t curr_node, uint64_t t_curr, uint64_t* update_register) {
         purge_finished_nodes(t_curr);
 
-        // Find a better way to allow handling nodes with operands_ready > t_curr 
+        // Find a better way to allow handling nodes with operands_ready > t_curr
         // priority queue with operands_ready ?? -> currently usable (DON'T TRY to copy prio_queue_nodes)
         while (!prio_queue_nodes.empty()) {
             uint64_t id = prio_queue_nodes.top().id;
@@ -265,6 +272,13 @@ class DependencyGraph {
                     S_act.push_back(id_max);
                     nodes[id_max].t_LR = t_act;
 
+                    if (nodes[id_max].rd > 0) {
+                        std::cout << nodes[id_max].rd << "\n";
+                        // Rd could be written earlier ??
+                        update_register[nodes[id_max].rd] = t_act + nodes[id_max].latency;
+                        std::cout << "update rd: " << nodes[id_max].rd << " with t:" << update_register[nodes[id_max].rd] << "\n";
+                    }
+
                     ready_nodes.erase(id_max);
                     active_nodes.insert(id_max);
                 }
@@ -282,7 +296,6 @@ class DependencyGraph {
                 }
             }
             t_act += 1;
-            
         }
 
         return nodes[curr_node].t_LR;
@@ -295,9 +308,9 @@ class DependencyGraph {
     void get_WB_time(uint64_t curr_node, uint64_t t_curr) {
         if (t_curr > nodes[curr_node].t_LR + 1) {
             nodes[curr_node].latency = t_curr - (nodes[curr_node].t_LR + 1);
-            //std::cout << "latency: " << nodes[curr_node].latency << "\n";
+            // std::cout << "latency: " << nodes[curr_node].latency << "\n";
         } else {
-            //std::cout << "latency: 1 (else)\n";
+            // std::cout << "latency: 1 (else)\n";
         }
     }
 
@@ -324,7 +337,9 @@ class DependencyGraph {
 
 class Scheduler : public ConnectorModel {
    public:
-    Scheduler(PerformanceModel* parent_) : ConnectorModel("RV32_OOO_Scheduler", parent_), last_reg_reads(), dpg(false) {};
+    Scheduler(PerformanceModel* parent_) : ConnectorModel("RV32_OOO_Scheduler", parent_), last_reg_reads(), dpg(false) {
+        perfModel_ = static_cast<PerformanceModel*>(parent_);
+    };
     virtual ~Scheduler() = default;  // Why did I want to add a custom destructor ?
 
     uint64_t* pc_ptr;
@@ -333,59 +348,7 @@ class Scheduler : public ConnectorModel {
     uint64_t* rd_ptr;
     uint64_t* addr_ptr;
 
-    // included RegisterModel in this scheduler (need for getting issue time)
-    uint64_t getXa(void) {
-        if (rs1_ptr[getInstrIndex()] == 0) {
-            return 0;
-        }
-
-        // RAW edge
-        if (last_reg_write[rs1_ptr[getInstrIndex()]] > 0) {
-            dpg.add_edge_RAW(last_reg_write[rs1_ptr[getInstrIndex()]], node_number);
-        }
-
-        last_reg_reads[rs1_ptr[getInstrIndex()]].insert(node_number);
-
-        earliest_issue = std::max(earliest_issue, registerModel[rs1_ptr[getInstrIndex()]]);
-        return registerModel[rs1_ptr[getInstrIndex()]];
-    };
-    uint64_t getXb(void) {
-        if (rs2_ptr[getInstrIndex()] == 0) {
-            return 0;
-        }
-
-        // RAW edge
-        if (last_reg_write[rs2_ptr[getInstrIndex()]] > 0) {
-            dpg.add_edge_RAW(last_reg_write[rs2_ptr[getInstrIndex()]], node_number);
-        }
-
-        last_reg_reads[rs2_ptr[getInstrIndex()]].insert(node_number);
-
-        earliest_issue = std::max(earliest_issue, registerModel[rs2_ptr[getInstrIndex()]]);
-        return registerModel[rs2_ptr[getInstrIndex()]];
-    };
-    void setXd(uint64_t xd_) {
-
-        // Ignore WAR and WAW hazards (i.e. using RegisterRenaming with always enough register available)
-/*         
-        // WAR
-        if(last_reg_reads[rd_ptr[getInstrIndex()]].empty()) {
-            for (int rline : last_reg_reads[rd_ptr[getInstrIndex()]]) {
-                dpg.add_edge_WAR(last_reg_write[rd_ptr[getInstrIndex()]], node_number);
-            }
-        }
-
-        // WAW
-        if(last_reg_write[rd_ptr[getInstrIndex()]] > 0) {
-            dpg.add_edge_WAW(last_reg_write[rd_ptr[getInstrIndex()]], node_number);
-        }
-         */
-
-        last_reg_write[rd_ptr[getInstrIndex()]] = node_number;
-        last_reg_reads[rd_ptr[getInstrIndex()]].clear();
-
-        registerModel[rd_ptr[getInstrIndex()]] = xd_;
-    };
+    PerformanceModel* perfModel_;
 
     void setDec_div(uint64_t x_);
     void setDec_mul(uint64_t x_);
@@ -398,8 +361,10 @@ class Scheduler : public ConnectorModel {
     uint64_t getT_issue(void);
 
    private:
+
     uint64_t node_number = 1;
-    uint64_t registerModel[32] = {0};
+
+    // uint64_t registerModel[32] = {0};
 
     F_Type instr_type = F_Type::EMPTY;
 
@@ -417,6 +382,6 @@ class Scheduler : public ConnectorModel {
     DependencyGraph dpg;
 };
 
-}  // namespace rv32_ooo
+}  // namespace RV32_OOO
 
 #endif  // RV32_OOO_SCHEDULER_H

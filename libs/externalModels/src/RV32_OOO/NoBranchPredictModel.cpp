@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "models/rv32_ooo/NoBranchPredictModel.h"
+#include "models/RV32_OOO/NoBranchPredictModel.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_ooo{
+namespace RV32_OOO{
 
 std::string NoBranchPredictModel::getInfoHeader()
 {
@@ -39,4 +39,4 @@ std::string NoBranchPredictModel::getInfoStream()
 }
 
     
-} // namespace common
+} // namespace RV32_OOO

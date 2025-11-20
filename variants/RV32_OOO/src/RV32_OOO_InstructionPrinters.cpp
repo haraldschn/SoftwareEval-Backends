@@ -196,7 +196,7 @@ static InstructionPrinter *instrPrinter_addi = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -212,7 +212,7 @@ static InstructionPrinter *instrPrinter_xori = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -228,7 +228,7 @@ static InstructionPrinter *instrPrinter_ori = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -244,7 +244,7 @@ static InstructionPrinter *instrPrinter_andi = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -260,7 +260,7 @@ static InstructionPrinter *instrPrinter_slti = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -276,7 +276,7 @@ static InstructionPrinter *instrPrinter_sltiu = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -292,7 +292,7 @@ static InstructionPrinter *instrPrinter_slli = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -308,7 +308,7 @@ static InstructionPrinter *instrPrinter_srli = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -324,7 +324,7 @@ static InstructionPrinter *instrPrinter_srai = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -339,8 +339,8 @@ static InstructionPrinter *instrPrinter_auipc = new InstructionPrinter(
   [](Printer* printer_){
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -355,8 +355,8 @@ static InstructionPrinter *instrPrinter_lui = new InstructionPrinter(
   [](Printer* printer_){
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -500,7 +500,7 @@ static InstructionPrinter *instrPrinter_csrrw = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -516,7 +516,7 @@ static InstructionPrinter *instrPrinter_csrrs = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -532,7 +532,7 @@ static InstructionPrinter *instrPrinter_csrrc = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -547,8 +547,8 @@ static InstructionPrinter *instrPrinter_csrrwi = new InstructionPrinter(
   [](Printer* printer_){
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -563,8 +563,8 @@ static InstructionPrinter *instrPrinter_csrrsi = new InstructionPrinter(
   [](Printer* printer_){
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -579,8 +579,8 @@ static InstructionPrinter *instrPrinter_csrrci = new InstructionPrinter(
   [](Printer* printer_){
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -597,7 +597,7 @@ static InstructionPrinter *instrPrinter_sb = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
     ret_strs << std::endl;
@@ -613,7 +613,7 @@ static InstructionPrinter *instrPrinter_sh = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
     ret_strs << std::endl;
@@ -629,7 +629,7 @@ static InstructionPrinter *instrPrinter_sw = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
     ret_strs << std::endl;
@@ -644,7 +644,7 @@ static InstructionPrinter *instrPrinter_lw = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
@@ -660,7 +660,7 @@ static InstructionPrinter *instrPrinter_lh = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
@@ -676,7 +676,7 @@ static InstructionPrinter *instrPrinter_lhu = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
@@ -692,7 +692,7 @@ static InstructionPrinter *instrPrinter_lb = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
@@ -708,7 +708,7 @@ static InstructionPrinter *instrPrinter_lbu = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_addr() << " | ";
@@ -725,7 +725,7 @@ static InstructionPrinter *instrPrinter_beq = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::endl;
@@ -741,7 +741,7 @@ static InstructionPrinter *instrPrinter_bne = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::endl;
@@ -757,7 +757,7 @@ static InstructionPrinter *instrPrinter_blt = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::endl;
@@ -773,7 +773,7 @@ static InstructionPrinter *instrPrinter_bge = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::endl;
@@ -789,7 +789,7 @@ static InstructionPrinter *instrPrinter_bltu = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::endl;
@@ -805,7 +805,7 @@ static InstructionPrinter *instrPrinter_bgeu = new InstructionPrinter(
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
     ret_strs << std::endl;
@@ -835,8 +835,8 @@ static InstructionPrinter *instrPrinter_jal = new InstructionPrinter(
   [](Printer* printer_){
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
@@ -852,7 +852,7 @@ static InstructionPrinter *instrPrinter_jalr = new InstructionPrinter(
     std::stringstream ret_strs;
     RV32_OOO_Printer* printer = static_cast<RV32_OOO_Printer*>(printer_);
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs1() << " | ";
-    ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";
+    ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rs2() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_rd() << " | ";
     ret_strs << "0x" << std::setfill('0') << std::setw(16) << std::right << std::hex << printer->get_pc() << " | ";
     ret_strs << std::setfill('-') << std::setw(18) << "" << " | ";

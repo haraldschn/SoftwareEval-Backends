@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include <cstdint>
 
-namespace rv32_ooo {
+namespace RV32_OOO {
 
 class NoBranchPredictModel : public ConnectorModel {
    public:
@@ -43,6 +43,6 @@ class NoBranchPredictModel : public ConnectorModel {
     uint64_t pc_info = 0;
 };
 
-}  // namespace rv32_ooo
+}  // namespace RV32_OOO
 
 #endif  // RV32_OOO_NO_BRANCH_PREDICT_MODEL_H

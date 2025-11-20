@@ -20,7 +20,7 @@
 #include "PerformanceModel.h"
 #include <cstdint>
 
-namespace rv32_ooo {
+namespace RV32_OOO {
 
 class DependModel : public ConnectorModel {
    public:
@@ -41,6 +41,6 @@ class DependModel : public ConnectorModel {
     uint64_t register_depency[64] = {0};
 };
 
-}  // namespace rv32_ooo
+}  // namespace RV32_OOO
 
 #endif  // RV32_OOO_DEPEND_MODEL_H

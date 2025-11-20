@@ -28,15 +28,20 @@
 
 #include "RV32_OOO_Channel.h"
 
-#include "models/rv32_ooo/NoBranchPredictModel.h"
-#include "models/rv32_ooo/ClobberModel.h"
-#include "models/rv32_ooo/Scheduler.h"
+#include "models/RV32_OOO/OoORegisterModel.h"
+#include "models/RV32_OOO/NoBranchPredictModel.h"
+#include "models/RV32_OOO/ClobberModel.h"
+#include "models/RV32_OOO/Scheduler.h"
 
 namespace RV32_OOO{
 
 void RV32_OOO_PerformanceModel::connectChannel(Channel* channel_)
 {
   RV32_OOO_Channel* channel = static_cast<RV32_OOO_Channel*>(channel_);
+
+  regModel.rs1_ptr = channel->rs1;
+  regModel.rs2_ptr = channel->rs2;
+  regModel.rd_ptr = channel->rd;
 
 
   clobberModel.rs1_ptr = channel->rs1;

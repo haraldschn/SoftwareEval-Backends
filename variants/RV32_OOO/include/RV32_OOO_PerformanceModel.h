@@ -27,9 +27,10 @@
 #include "PerformanceModel.h"
 #include "Channel.h"
 
-#include "models/rv32_ooo/NoBranchPredictModel.h"
-#include "models/rv32_ooo/ClobberModel.h"
-#include "models/rv32_ooo/Scheduler.h"
+#include "models/RV32_OOO/OoORegisterModel.h"
+#include "models/RV32_OOO/NoBranchPredictModel.h"
+#include "models/RV32_OOO/ClobberModel.h"
+#include "models/RV32_OOO/Scheduler.h"
 
 namespace RV32_OOO{
 
@@ -44,6 +45,7 @@ public:
     ,EX_stage_mul_NoB(2,0)
     ,EX_stage_lsu_NoB(2,0)
     ,WB_stage_NoB(4,0)
+    ,regModel(this)
     ,noBranchPredModel(this)
     ,clobberModel(this)
     ,scheduleModel(this)
@@ -72,9 +74,10 @@ public:
   MultiElementTimingVariable WB_stage_NoB;
 
   // External Resource Models
-  rv32_ooo::NoBranchPredictModel noBranchPredModel;
-  rv32_ooo::ClobberModel clobberModel;
-  rv32_ooo::Scheduler scheduleModel;
+  RV32_OOO::OoORegisterModel regModel;
+  RV32_OOO::NoBranchPredictModel noBranchPredModel;
+  RV32_OOO::ClobberModel clobberModel;
+  RV32_OOO::Scheduler scheduleModel;
 
   virtual void connectChannel(Channel*);
   virtual uint64_t getCycleCount(void);

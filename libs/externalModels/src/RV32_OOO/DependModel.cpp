@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include "models/rv32_ooo/DependModel.h"
+#include "models/RV32_OOO/DependModel.h"
 
 #include <cstdint>
 #include <string>
 #include <sstream>
 
-namespace rv32_ooo{
+namespace RV32_OOO{
 
 void DependModel::setDecodeTime(uint64_t x_) {
     dec_time = x_;
@@ -57,4 +57,4 @@ uint64_t DependModel::getIssueTime(void) {
 }
 
     
-} // namespace common
+} // namespace RV32_OOO
