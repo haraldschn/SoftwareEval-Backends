@@ -42,25 +42,25 @@ private:
 class BranchHistoryTable
 {
 public:
-  bool getPrediction(int);
-  void update(int, bool);
-  void createEntry(int);
-  void replaceEntry(int, int);
+  bool getPrediction(uint64_t);
+  void update(uint64_t, bool);
+  void createEntry(uint64_t);
+  void replaceEntry(uint64_t, uint64_t);
 
 private:
-  std::map<int, PredictFsm*> table;
+  std::map<uint64_t, PredictFsm*> table;
 };
 
 class BranchTargetBuffer
 {
 public:
-  int getPrediction(int);
-  void update(int, int);
-  void createEntry(int);
-  void replaceEntry(int, int);
+  uint64_t getPrediction(uint64_t);
+  void update(uint64_t, uint64_t);
+  void createEntry(uint64_t);
+  void replaceEntry(uint64_t, uint64_t);
 
 private:
-  std::map<int, int> table;
+  std::map<uint64_t, uint64_t> table;
 };
  
 class DynamicBranchPredictModel : public ConnectorModel
@@ -72,26 +72,26 @@ public:
     uint64_t* pc_ptr;
     uint64_t* brTarget_ptr;
 
-    void setPc_p(int);
-    void setPc_np(int);
-    int getPc(void);
+    void setPc_p(uint64_t);
+    void setPc_np(uint64_t);
+    uint64_t getPc(void);
     
 private:
-    int pc_p = 0;
-    int pc_np = 0;
+    uint64_t pc_p = 0;
+    uint64_t pc_np = 0;
 
     bool branchInstr = false;
-    int branchInstrPc = 0;
+    uint64_t branchInstrPc = 0;
 
     bool pred_taken = false;
-    int pred_branchAddr = 0;
-    int comp_branchAddr = 0;
+    uint64_t pred_branchAddr = 0;
+    uint64_t comp_branchAddr = 0;
 
     BranchTargetBuffer btb;
     BranchHistoryTable bht;
     
-    const int BUFFER_DEPTH;
-    std::list<int> pcFifo;
+    const uint64_t BUFFER_DEPTH;
+    std::list<uint64_t> pcFifo;
 
 };
 

@@ -128,4 +128,8 @@ std::string CVA6_PerformanceModel::getPrintHeader(void)
   return ret_strs.str();
 }
 
+uint64_t CVA6_PerformanceModel::getLastEntryNode(void) {
+    return 0;
+}
+
 } // namespace CVA6

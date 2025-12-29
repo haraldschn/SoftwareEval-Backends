@@ -67,7 +67,7 @@ uint64_t MultiElementTimingVariable::get_min()
   return fifo[min_idx];
 }
 
-PerformanceModel::PerformanceModel(std::string name_, SchedulingFunctionSet* schedulingFunctionSet_) : name(name_), schedulingFunctionSet(schedulingFunctionSet_)
+PerformanceModel::PerformanceModel(std::string name_, SchedulingFunctionSet* schedulingFunctionSet_) : name(name_), schedulingFunctionSet(schedulingFunctionSet_), graph(1)
 {
     schedulingFunctionSet->foreach([this](SchedulingFunction &func)
     {
@@ -79,6 +79,20 @@ PerformanceModel::PerformanceModel(std::string name_, SchedulingFunctionSet* sch
         schedulingFunction_map[func.typeId] = func.schedulingFunction;
     });
 }
+
+PerformanceModel::PerformanceModel(std::string name_, SchedulingFunctionSet* schedulingFunctionSet_, int k_size) : name(name_), schedulingFunctionSet(schedulingFunctionSet_), graph(k_size, false)
+{
+    schedulingFunctionSet->foreach([this](SchedulingFunction &func)
+    {
+        auto typeId_it = schedulingFunction_map.find(func.typeId);
+        if(typeId_it != schedulingFunction_map.end())
+        {
+	  return;
+        }
+        schedulingFunction_map[func.typeId] = func.schedulingFunction;
+    });
+}
+
 
 void PerformanceModel::callSchedulingFunction(int typeId_)
 {

@@ -29,6 +29,8 @@
 
 #include <iostream> // TODO: For debug. Remove
 
+#include "PerformanceScheduler.h"
+
 class MultiElementTimingVariable
 {
 public:
@@ -54,6 +56,7 @@ class PerformanceModel
 {
 public:
     PerformanceModel(std::string, SchedulingFunctionSet*);
+    PerformanceModel(std::string, SchedulingFunctionSet*, int);
     virtual ~PerformanceModel() = default;
 
     const std::string name;
@@ -67,13 +70,16 @@ public:
     virtual uint64_t getCycleCount(void) = 0;
     virtual std::string getPipelineStream(void) = 0;
     virtual std::string getPrintHeader(void) = 0; 
+
+    virtual uint64_t getLastEntryNode(void) = 0; 
   
     int instrIndex; // TODO: Make protected, with ConnectorModel as a friend?
 
 private:
     SchedulingFunctionSet* const schedulingFunctionSet;
     std::map<int, std::function<void(PerformanceModel*)>> schedulingFunction_map;
-
+public:
+    ResourceGraph graph;
 };
 
 class SchedulingFunction;
@@ -97,10 +103,12 @@ public:
 
     const int typeId;
     const std::string name;
-    const std::function<void(PerformanceModel*)> schedulingFunction;
 
 private:
     SchedulingFunctionSet* const parentSet;
+
+public:
+    const std::function<void(PerformanceModel*)> schedulingFunction;
 };
 
 class ConnectorModel

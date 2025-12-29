@@ -96,6 +96,7 @@ public:
   virtual uint64_t getCycleCount(void);
   virtual std::string getPipelineStream(void);
   virtual std::string getPrintHeader(void);
+  virtual uint64_t getLastEntryNode(void);
 
 };
 

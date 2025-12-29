@@ -22,7 +22,7 @@ namespace common{
 
 bool PredictFsm::getPrediction()
 {
-  if(state == STRONG_NOT_TAKEN | state == WEAK_NOT_TAKEN)
+  if(state == STRONG_NOT_TAKEN || state == WEAK_NOT_TAKEN)
   {
     return false;
   }
@@ -51,7 +51,7 @@ void PredictFsm::update(bool taken)
   
 }
   
-bool BranchHistoryTable::getPrediction(int pc)
+bool BranchHistoryTable::getPrediction(uint64_t pc)
 {
   auto entry = table.find(pc);
 
@@ -69,7 +69,7 @@ bool BranchHistoryTable::getPrediction(int pc)
 
 }
 
-void BranchHistoryTable::update(int pc, bool taken)
+void BranchHistoryTable::update(uint64_t pc, bool taken)
 {
   auto entry = table.find(pc);
   if(entry != table.end())
@@ -82,12 +82,12 @@ void BranchHistoryTable::update(int pc, bool taken)
   }
 }
 
-void BranchHistoryTable::createEntry(int pc)
+void BranchHistoryTable::createEntry(uint64_t pc)
 {
   table[pc] = new PredictFsm();
 }
 
-void BranchHistoryTable::replaceEntry(int new_pc, int old_pc)
+void BranchHistoryTable::replaceEntry(uint64_t new_pc, uint64_t old_pc)
 {
   auto entry = table.find(old_pc);
   if(entry == table.end())
@@ -99,7 +99,7 @@ void BranchHistoryTable::replaceEntry(int new_pc, int old_pc)
   table.erase(entry);
 }   
 
-int BranchTargetBuffer::getPrediction(int pc)
+uint64_t BranchTargetBuffer::getPrediction(uint64_t pc)
 {
   auto entry = table.find(pc);
 
@@ -115,7 +115,7 @@ int BranchTargetBuffer::getPrediction(int pc)
   return 0;
 }
 
-void BranchTargetBuffer::update(int pc, int branch_addr)
+void BranchTargetBuffer::update(uint64_t pc, uint64_t branch_addr)
 {
   auto entry = table.find(pc);
   if(entry != table.end())
@@ -128,12 +128,12 @@ void BranchTargetBuffer::update(int pc, int branch_addr)
   }
 }
 
-void BranchTargetBuffer::createEntry(int pc)
+void BranchTargetBuffer::createEntry(uint64_t pc)
 {
   table[pc] = 0;
 }
 
-void BranchTargetBuffer::replaceEntry(int new_pc, int old_pc)
+void BranchTargetBuffer::replaceEntry(uint64_t new_pc, uint64_t old_pc)
 {
   auto entry = table.find(old_pc);
   if(entry == table.end())
@@ -145,19 +145,19 @@ void BranchTargetBuffer::replaceEntry(int new_pc, int old_pc)
   table[new_pc] = 0;
 }
 
-void DynamicBranchPredictModel::setPc_p(int pc_p_)
+void DynamicBranchPredictModel::setPc_p(uint64_t pc_p_)
 {
   pc_p = pc_p_;
 }
 
-void DynamicBranchPredictModel::setPc_np(int pc_np_)
+void DynamicBranchPredictModel::setPc_np(uint64_t pc_np_)
 {
   branchInstr = true;
   branchInstrPc = pc_ptr[getInstrIndex()];
   comp_branchAddr = brTarget_ptr[getInstrIndex()];
 
   bool entryExists = false;
-  for(const int & entry : pcFifo)
+  for(const uint64_t & entry : pcFifo)
   {
     if(entry == branchInstrPc)
     {
@@ -176,7 +176,7 @@ void DynamicBranchPredictModel::setPc_np(int pc_np_)
     }
     else
     {
-      int removePc = pcFifo.front();
+      uint64_t removePc = pcFifo.front();
       pcFifo.pop_front();
       bht.replaceEntry(branchInstrPc, removePc);
       btb.replaceEntry(branchInstrPc, removePc);
@@ -189,7 +189,7 @@ void DynamicBranchPredictModel::setPc_np(int pc_np_)
   
 }
 
-int DynamicBranchPredictModel::getPc()
+uint64_t DynamicBranchPredictModel::getPc()
 {
   if(!branchInstr)
   {
@@ -198,7 +198,7 @@ int DynamicBranchPredictModel::getPc()
 
   branchInstr = false;
   
-  int curPc = pc_ptr[getInstrIndex()];
+  uint64_t curPc = pc_ptr[getInstrIndex()];
   bool taken = (curPc == pred_branchAddr) | (curPc == comp_branchAddr);
 
   bht.update(branchInstrPc, taken);

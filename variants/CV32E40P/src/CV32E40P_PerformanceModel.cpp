@@ -1,21 +1,20 @@
 /*
-* Copyright 2025 Chair of EDA, Technical University of Munich
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*	 http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2025 Chair of EDA, Technical University of Munich
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *	 http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /********************* AUTO GENERATE FILE (create by M2-ISA-R-Perf) *********************/
-
 
 #include "CV32E40P_PerformanceModel.h"
 
@@ -33,60 +32,65 @@
 #include "models/cv32e40p/DividerModel.h"
 #include "models/cv32e40p/DividerUnsignedModel.h"
 
-namespace CV32E40P{
+namespace CV32E40P {
 
-void CV32E40P_PerformanceModel::connectChannel(Channel* channel_)
-{
-  CV32E40P_Channel* channel = static_cast<CV32E40P_Channel*>(channel_);
+void CV32E40P_PerformanceModel::connectChannel(Channel* channel_) {
+    CV32E40P_Channel* channel = static_cast<CV32E40P_Channel*>(channel_);
 
-  regModel.rs1_ptr = channel->rs1;
-  regModel.rs2_ptr = channel->rs2;
-  regModel.rd_ptr = channel->rd;
+    regModel.rs1_ptr = channel->rs1;
+    regModel.rs2_ptr = channel->rs2;
+    regModel.rd_ptr = channel->rd;
 
-  staBranchPredModel.pc_ptr = channel->pc;
-  staBranchPredModel.brTarget_ptr = channel->brTarget;
+    staBranchPredModel.pc_ptr = channel->pc;
+    staBranchPredModel.brTarget_ptr = channel->brTarget;
 
-  divider.rs2_data_ptr = channel->rs2_data;
+    divider.rs2_data_ptr = channel->rs2_data;
 
-  divider_u.rs2_data_ptr = channel->rs2_data;
-
+    divider_u.rs2_data_ptr = channel->rs2_data;
 }
 
-uint64_t CV32E40P_PerformanceModel::getCycleCount(void)
-{
-  
-  return std::max({
-    IF_stage 
-    ,ID_stage
-    ,EX_stage
-    ,WB_stage
-  });
+uint64_t CV32E40P_PerformanceModel::getCycleCount(void) {
+    uint64_t IF_stage = graph.get_node_t_start(nodes_ID.back());
+    uint64_t ID_stage = graph.get_node_t_start(nodes_EX.back());
+    uint64_t EX_stage = std::max(graph.get_node_t_start(nodes_WB.back()), graph.get_node_t_end(nodes_EX.back()));
+    uint64_t WB_stage = graph.get_node_t_end(nodes_WB.back());
+
+    return std::max({IF_stage, ID_stage, EX_stage, WB_stage});
 }
 
-std::string CV32E40P_PerformanceModel::getPipelineStream(void)
-{
-  std::stringstream ret_strs;
-  ret_strs << entrancePoint;
-  ret_strs << "," << IF_stage;
-  ret_strs << "," << ID_stage;
-  ret_strs << "," << EX_stage;
-  ret_strs << "," << WB_stage;
-  ret_strs << "," << staBranchPredModel.getInfoStream();
-  ret_strs << std::endl;
-  return ret_strs.str();
+std::string CV32E40P_PerformanceModel::getPipelineStream(void) {
+    uint64_t min_len = std::min({nodes_IF.size(), nodes_ID.size(), nodes_EX.size(), nodes_WB.size()});
+
+    std::stringstream ret_strs;
+    if (min_len > current_print) {
+        ret_strs << graph.get_node_t_start(nodes_ID[current_print-1]);
+        ret_strs << "," << graph.get_node_t_start(nodes_ID[current_print]);
+        ret_strs << "," << graph.get_node_t_start(nodes_EX[current_print]);
+        ret_strs << "," << std::max(graph.get_node_t_start(nodes_WB[current_print]), graph.get_node_t_end(nodes_EX[current_print]));
+        ret_strs << "," << graph.get_node_t_end(nodes_WB[current_print]);
+        ret_strs << "," << staBranchPredModel_trace[current_print];
+        ret_strs << "," << graph.get_node_t_start(nodes_IF[current_print]);
+        ret_strs << std::endl;
+        current_print += 1;
+    }
+
+    return ret_strs.str();
 }
 
-std::string CV32E40P_PerformanceModel::getPrintHeader(void)
-{
-  std::stringstream ret_strs;
-  ret_strs << "Enter";
-  ret_strs << "," << "IF_stage";
-  ret_strs << "," << "ID_stage";
-  ret_strs << "," << "EX_stage";
-  ret_strs << "," << "WB_stage";
-  ret_strs << "," << staBranchPredModel.getInfoHeader();
-  ret_strs << std::endl;
-  return ret_strs.str();
+std::string CV32E40P_PerformanceModel::getPrintHeader(void) {
+    std::stringstream ret_strs;
+    ret_strs << "Enter";
+    ret_strs << "," << "IF_stage";
+    ret_strs << "," << "ID_stage";
+    ret_strs << "," << "EX_stage";
+    ret_strs << "," << "WB_stage";
+    ret_strs << "," << staBranchPredModel.getInfoHeader();
+    ret_strs << std::endl;
+    return ret_strs.str();
 }
 
-} // namespace CV32E40P
+uint64_t CV32E40P_PerformanceModel::getLastEntryNode(void) {
+    return nodes_IF.back();
+}
+
+}  // namespace CV32E40P

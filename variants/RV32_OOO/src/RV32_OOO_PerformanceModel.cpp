@@ -31,7 +31,6 @@
 #include "models/RV32_OOO/OoORegisterModel.h"
 #include "models/RV32_OOO/NoBranchPredictModel.h"
 #include "models/RV32_OOO/ClobberModel.h"
-#include "models/RV32_OOO/Scheduler.h"
 
 namespace RV32_OOO{
 
@@ -43,56 +42,33 @@ void RV32_OOO_PerformanceModel::connectChannel(Channel* channel_)
   regModel.rs2_ptr = channel->rs2;
   regModel.rd_ptr = channel->rd;
 
-
   clobberModel.rs1_ptr = channel->rs1;
   clobberModel.rs2_ptr = channel->rs2;
   clobberModel.rd_ptr = channel->rd;
-
-  scheduleModel.pc_ptr = channel->pc;
-  scheduleModel.rs1_ptr = channel->rs1;
-  scheduleModel.rs2_ptr = channel->rs2;
-  scheduleModel.rd_ptr = channel->rd;
-  scheduleModel.addr_ptr = channel->addr;
 
 }
 
 uint64_t RV32_OOO_PerformanceModel::getCycleCount(void)
 {
   
-  return std::max({
-    PC_stage 
-    ,IF_stage
-    ,IS_stage
-    ,IB_stage_OoO.get(1)
-    ,EX_stage_div_NoB
-    ,EX_stage_mul_NoB.get(1)
-    ,EX_stage_mul0v_NoB
-    ,EX_stage_mul1v_NoB
-    ,EX_stage_br_NoB
-    ,EX_stage_alu_NoB
-    ,EX_stage_lsu_NoB.get(1)
-    ,EX_stage_lu0v_NoB
-    ,EX_stage_lu1v_NoB
-    ,EX_stage_suv_NoB
-    ,WB_stage_NoB.get(1)
-  });
+  return 0;
 }
 
 std::string RV32_OOO_PerformanceModel::getPipelineStream(void)
 {
   std::stringstream ret_strs;
   ret_strs << entrancePoint;
-  ret_strs << "," << PC_stage;
-  ret_strs << "," << IF_stage;
-  ret_strs << "," << IS_stage;
-  ret_strs << "," << IB_stage_OoO.get(1);
-  ret_strs << "," << EX_stage_div_NoB;
-  ret_strs << "," << EX_stage_mul_NoB.get(1);
-  ret_strs << "," << EX_stage_br_NoB;
-  ret_strs << "," << EX_stage_alu_NoB;
-  ret_strs << "," << EX_stage_lsu_NoB.get(1);
-  ret_strs << "," << WB_stage_NoB.get(1);
-  ret_strs << "," << noBranchPredModel.getInfoStream();
+  // ret_strs << "," << PC_stage;
+  // ret_strs << "," << IF_stage;
+  // ret_strs << "," << IS_stage;
+  // ret_strs << "," << IB_stage_OoO.get(1);
+  // ret_strs << "," << EX_stage_div_NoB;
+  // ret_strs << "," << EX_stage_mul_NoB.get(1);
+  // ret_strs << "," << EX_stage_br_NoB;
+  // ret_strs << "," << EX_stage_alu_NoB;
+  // ret_strs << "," << EX_stage_lsu_NoB.get(1);
+  // ret_strs << "," << WB_stage_NoB.get(1);
+  // ret_strs << "," << noBranchPredModel.getInfoStream();
   ret_strs << std::endl;
   return ret_strs.str();
 }
@@ -114,6 +90,10 @@ std::string RV32_OOO_PerformanceModel::getPrintHeader(void)
   ret_strs << "," << noBranchPredModel.getInfoHeader();
   ret_strs << std::endl;
   return ret_strs.str();
+}
+
+uint64_t RV32_OOO_PerformanceModel::getLastEntryNode(void) {
+    return nodes_PC.back();
 }
 
 } // namespace RV32_OOO

@@ -74,7 +74,7 @@ std::string StaticBranchPredictModel::getInfoStream()
 {
   std::stringstream ret_strs;
   ret_strs << mispredicted_info;
-  ret_strs << "," << pc_info;
+  //ret_strs << "," << pc_info;
   return ret_strs.str();
 }
 

@@ -34,28 +34,51 @@
 
 namespace CV32E40P{
 
+// Node Types for Scheduling function
+// currently only Stages
+enum F_Type {
+    EMPTY,
+    // Order matters (Stage -> Substage -> Resource)
+    IF_stage,
+    ID_stage,
+    EX_stage,
+    WB_stage,
+    n_JumpDecoder,
+    F_SIZE
+};
+
 extern SchedulingFunctionSet* CV32E40P_SchedulingFunctionSet;
 
 class CV32E40P_PerformanceModel : public PerformanceModel
 {
 public:
 
-  CV32E40P_PerformanceModel() : PerformanceModel("CV32E40P", CV32E40P_SchedulingFunctionSet)
+  CV32E40P_PerformanceModel() : PerformanceModel("CV32E40P", CV32E40P_SchedulingFunctionSet, F_Type::F_SIZE)
     ,regModel(this)
     ,staBranchPredModel(this)
     ,divider(this)
     ,divider_u(this)
-  {};
+  {
+    nodes_IF.push_back(0);
+    nodes_ID.push_back(0);
+    nodes_EX.push_back(0);
+    nodes_WB.push_back(0);
+
+    staBranchPredModel_trace.push_back("");
+  };
 
   // Entrance-point "timing variable" (only used for info-stream)
   uint64_t entrancePoint = 0;
 
-  // Single-Element Timing Variables
-  uint64_t IF_stage = 0;
-  uint64_t ID_stage = 0;
-  uint64_t EX_stage = 0;
-  uint64_t WB_stage = 0;
+  // Result Node IDs
+  std::vector<uint64_t> nodes_IF;
+  std::vector<uint64_t> nodes_ID;
+  std::vector<uint64_t> nodes_EX;
+  std::vector<uint64_t> nodes_WB;
 
+  std::vector<std::string> staBranchPredModel_trace;
+
+  uint64_t current_print = 1;
 
   // External Resource Models
   common::StandardRegisterModel regModel;
@@ -67,6 +90,8 @@ public:
   virtual uint64_t getCycleCount(void);
   virtual std::string getPipelineStream(void);
   virtual std::string getPrintHeader(void);
+
+  virtual uint64_t getLastEntryNode(void);
 
 };
 

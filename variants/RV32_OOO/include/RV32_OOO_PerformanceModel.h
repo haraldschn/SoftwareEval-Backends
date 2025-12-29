@@ -30,9 +30,29 @@
 #include "models/RV32_OOO/OoORegisterModel.h"
 #include "models/RV32_OOO/NoBranchPredictModel.h"
 #include "models/RV32_OOO/ClobberModel.h"
-#include "models/RV32_OOO/Scheduler.h"
 
 namespace RV32_OOO{
+
+#define ISSUE_LENGTH 1
+
+// Node Types for Scheduling function
+// currently only Stages
+enum F_Type {
+    EMPTY,
+    // Order matters (Stage -> Substage -> Resource)
+    PC_stage,
+    IF_stage,
+    IS_stage,
+    IB_stage,
+    EX_stage,
+    WB_stage,
+    EX_div,
+    EX_mul,
+    Ex_br,
+    EX_alu,
+    EX_lsu,
+    F_SIZE
+};
 
 extern SchedulingFunctionSet* RV32_OOO_SchedulingFunctionSet;
 
@@ -41,48 +61,34 @@ class RV32_OOO_PerformanceModel : public PerformanceModel
 public:
 
   RV32_OOO_PerformanceModel() : PerformanceModel("RV32_OOO", RV32_OOO_SchedulingFunctionSet)
-    ,IB_stage_OoO(4,0)
-    ,EX_stage_mul_NoB(2,0)
-    ,EX_stage_lsu_NoB(2,0)
-    ,WB_stage_NoB(4,0)
     ,regModel(this)
     ,noBranchPredModel(this)
     ,clobberModel(this)
-    ,scheduleModel(this)
   {};
 
   // Entrance-point "timing variable" (only used for info-stream)
   uint64_t entrancePoint = 0;
 
-  // Single-Element Timing Variables
-  uint64_t PC_stage = 0;
-  uint64_t IF_stage = 0;
-  uint64_t IS_stage = 0;
-  uint64_t EX_stage_div_NoB = 0;
-  uint64_t EX_stage_mul0v_NoB = 0;
-  uint64_t EX_stage_mul1v_NoB = 0;
-  uint64_t EX_stage_br_NoB = 0;
-  uint64_t EX_stage_alu_NoB = 0;
-  uint64_t EX_stage_lu0v_NoB = 0;
-  uint64_t EX_stage_lu1v_NoB = 0;
-  uint64_t EX_stage_suv_NoB = 0;
+  std::vector<uint64_t> nodes_PC;
+  std::vector<uint64_t> nodes_IF;
+  std::vector<uint64_t> nodes_IS;
+  std::vector<uint64_t> nodes_IB;
+  std::vector<uint64_t> nodes_EX; // Get Node type from individual Node
+  std::vector<uint64_t> nodes_WB;
 
-  // Multi-Element Timing Variables
-  MultiElementTimingVariable IB_stage_OoO;
-  MultiElementTimingVariable EX_stage_mul_NoB;
-  MultiElementTimingVariable EX_stage_lsu_NoB;
-  MultiElementTimingVariable WB_stage_NoB;
+  std::vector<std::string> staBranchPredModel_trace;
 
   // External Resource Models
   RV32_OOO::OoORegisterModel regModel;
   RV32_OOO::NoBranchPredictModel noBranchPredModel;
   RV32_OOO::ClobberModel clobberModel;
-  RV32_OOO::Scheduler scheduleModel;
 
   virtual void connectChannel(Channel*);
   virtual uint64_t getCycleCount(void);
   virtual std::string getPipelineStream(void);
   virtual std::string getPrintHeader(void);
+
+  virtual uint64_t getLastEntryNode(void);
 
 };
 

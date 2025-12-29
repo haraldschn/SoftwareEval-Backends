@@ -19,57 +19,59 @@
 #include <iostream>
 #include <cstdint>
 
-PerformanceEstimator::~PerformanceEstimator()
-{
-  delete perfModel_ptr;
+PerformanceEstimator::~PerformanceEstimator() {
+    delete perfModel_ptr;
 }
 
-void PerformanceEstimator::connectChannel(Channel* channel_)
-{
-  // Connect own pointers
-  ch_typeId_ptr = channel_->typeId;
-  ch_instrCnt_ptr = &(channel_->instrCnt);
+void PerformanceEstimator::connectChannel(Channel* channel_) {
+    // Connect own pointers
+    ch_typeId_ptr = channel_->typeId;
+    ch_instrCnt_ptr = &(channel_->instrCnt);
 
-  // Forward channel to perfModel
-  perfModel_ptr->connectChannel(channel_);
+    // Forward channel to perfModel
+    perfModel_ptr->connectChannel(channel_);
 }
 
-void PerformanceEstimator::initialize(void)
-{
-  // TODO: Need some kind of file/table header
-  streamer.setPrintHeader(perfModel_ptr->getPrintHeader());
-  streamer.openStream();
+void PerformanceEstimator::initialize(void) {
+    // TODO: Need some kind of file/table header
+    streamer.setPrintHeader(perfModel_ptr->getPrintHeader());
+    streamer.openStream();
 }
 
-void PerformanceEstimator::execute(void)
-{
-  int instrCnt = *ch_instrCnt_ptr;
-  
-  perfModel_ptr->newTraceBlock();
-  
-  for(int instr_i=0; instr_i < instrCnt; instr_i++)
-  {
-    perfModel_ptr->callSchedulingFunction(ch_typeId_ptr[instr_i]);
-    perfModel_ptr->update();
+void PerformanceEstimator::execute(void) {
+    int instrCnt = *ch_instrCnt_ptr;
 
-    if(streamer.isActive())
-    {
-      streamer.stream(perfModel_ptr->getPipelineStream());
+    perfModel_ptr->newTraceBlock();
+
+    for (int instr_i = 0; instr_i < instrCnt; instr_i++) {
+        perfModel_ptr->callSchedulingFunction(ch_typeId_ptr[instr_i]);
+        perfModel_ptr->update();
+        perfModel_ptr->graph.schedule(perfModel_ptr->getLastEntryNode(), false);
     }
 
-  }
-
-  globalInstrCnt += instrCnt;
+    globalInstrCnt += instrCnt;
+    //std::cout << globalInstrCnt << "\n";
+    //perfModel_ptr->graph.schedule(perfModel_ptr->getLastEntryNode(), false);
+    //perfModel_ptr->graph.schedule(globalInstrCnt, false);
 }
 
-void PerformanceEstimator::finalize(void)
-{
-  uint64_t globalCycleCnt = perfModel_ptr->getCycleCount();
-  std::cout << "-----------------------------------------------------------------------------------------------------------------\n";
-  std::cout << " >> Number of instructions: " << globalInstrCnt << "\n";
-  std::cout << " >> Estimated number of processor cycles: " << globalCycleCnt << "\n";
-  std::cout << " >> Estimated average number of processor cycles per instruction: " << ((float)globalCycleCnt/(float)globalInstrCnt) << "\n";
-  std::cout << "-----------------------------------------------------------------------------------------------------------------\n";
+void PerformanceEstimator::finalize(void) {
+    //perfModel_ptr->graph.schedule(globalInstrCnt, true);
+    perfModel_ptr->graph.schedule(perfModel_ptr->getLastEntryNode(), true);
 
-  streamer.closeStream();
+    std::string ret_string = perfModel_ptr->getPipelineStream();
+    while (streamer.isActive() && !ret_string.empty()) {
+        streamer.stream(ret_string);
+        ret_string = perfModel_ptr->getPipelineStream();
+    }
+
+    uint64_t globalCycleCnt = perfModel_ptr->getCycleCount();
+    std::cout << "-----------------------------------------------------------------------------------------------------------------\n";
+    std::cout << " >> Number of instructions: " << globalInstrCnt << "\n";
+    std::cout << " >> Estimated number of processor cycles: " << globalCycleCnt << "\n";
+    std::cout << " >> Estimated average number of processor cycles per instruction: " << ((float)globalCycleCnt / (float)globalInstrCnt) << "\n";
+    std::cout << "-----------------------------------------------------------------------------------------------------------------\n";
+
+    streamer.closeStream();
+    perfModel_ptr->graph.~ResourceGraph();
 }
