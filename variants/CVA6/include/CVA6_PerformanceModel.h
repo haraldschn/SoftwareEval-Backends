@@ -37,17 +37,67 @@
 
 namespace CVA6{
 
+// Node Types for Scheduling function
+// currently only Stages
+enum F_Type {
+    EMPTY,
+    // Order matters (Stage -> Substage -> Resource)
+    PC_stage,
+    IF_stage,
+    IQ_stage,
+    ID_stage,
+    IS_stage,
+    EX_stage,
+    COM_stage,
+    IF_substage_0,
+    IF_substage_1,
+    IF_substage_2,
+    EX_substage_alu,
+    EX_substage_mul_i,
+    EX_substage_mul_o,
+    EX_substage_div,
+    EX_substage_lCtrl,
+    EX_substage_dCache,
+    EX_substage_lUnit,
+    EX_substage_sCtrl,
+    EX_substage_sUnit,
+    F_SIZE
+};
+
+const uint32_t F_Capacities[]{
+    1, //EMPTY,
+    // Order matters (Stage -> Substage -> Resource)
+    1, //PC_stage,
+    3, //IF_stage,
+    7, //IQ_stage,
+    1, //ID_stage,
+    1, //IS_stage,
+    8, //EX_stage,
+    2, //COM_stage,
+
+    1, //IF_substage_0,
+    1, //IF_substage_1,
+    1, //IF_substage_2,
+    1, //EX_substage_alu,
+    1, //EX_substage_mul_i,
+    1, //EX_substage_mul_o,
+    1, //EX_substage_div,
+    1, //EX_substage_lCtrl,
+    1, //EX_substage_dCache,
+    1, //EX_substage_lUnit,
+    1, //EX_substage_sCtrl,
+    1, //EX_substage_sUnit,
+
+    1 //F_SIZE
+};
+
 extern SchedulingFunctionSet* CVA6_SchedulingFunctionSet;
 
 class CVA6_PerformanceModel : public PerformanceModel
 {
 public:
 
-  CVA6_PerformanceModel() : PerformanceModel("CVA6", CVA6_SchedulingFunctionSet)
-    ,IF_stage(3,0)
-    ,IQ_stage(7,0)
-    ,EX_stage(8,0)
-    ,COM_stage(2,0)
+  CVA6_PerformanceModel() : PerformanceModel("CVA6", CVA6_SchedulingFunctionSet, F_Type::F_SIZE)
     ,regModel(this)
     ,dynBranchPredModel(this)
     ,clobberModel(this)
@@ -55,33 +105,41 @@ public:
     ,divider(this)
     ,divider_u(this)
     ,dCacheModel(this)
-  {};
+  {
+    graph.init_capacity(F_Capacities);
+
+    nodes_PC.push_back(0);
+    nodes_IF.push_back(0);
+    nodes_IQ.push_back(0);
+    nodes_ID.push_back(0);
+    nodes_IS.push_back(0);
+    nodes_EX.push_back(0);
+    nodes_COM.push_back(0);
+
+    nodes_EX_mul.push_back(0);
+    nodes_EX_div.push_back(0);
+  };
 
   // Entrance-point "timing variable" (only used for info-stream)
   uint64_t entrancePoint = 0;
 
-  // Single-Element Timing Variables
-  uint64_t PC_stage = 0;
-  uint64_t IF_substage_0 = 0;
-  uint64_t IF_substage_1 = 0;
-  uint64_t IF_substage_2 = 0;
-  uint64_t ID_stage = 0;
-  uint64_t IS_stage = 0;
-  uint64_t EX_substage_alu = 0;
-  uint64_t EX_substage_mul_i = 0;
-  uint64_t EX_substage_mul_o = 0;
-  uint64_t EX_substage_div = 0;
-  uint64_t EX_substage_lCtrl = 0;
-  uint64_t EX_substage_dCache = 0;
-  uint64_t EX_substage_lUnit = 0;
-  uint64_t EX_substage_sCtrl = 0;
-  uint64_t EX_substage_sUnit = 0;
+  // Result Node IDs
+  std::vector<uint64_t> nodes_PC;
+  std::vector<uint64_t> nodes_IF;
+  std::vector<uint64_t> nodes_IQ;
+  std::vector<uint64_t> nodes_ID;
+  std::vector<uint64_t> nodes_IS;
+  std::vector<uint64_t> nodes_EX;
+  std::vector<uint64_t> nodes_COM;
 
-  // Multi-Element Timing Variables
-  MultiElementTimingVariable IF_stage;
-  MultiElementTimingVariable IQ_stage;
-  MultiElementTimingVariable EX_stage;
-  MultiElementTimingVariable COM_stage;
+  std::vector<uint64_t> nodes_IF_substage_0;
+  std::vector<uint64_t> nodes_IF_substage_1;
+  std::vector<uint64_t> nodes_IF_substage_2;
+
+  std::vector<uint64_t> nodes_EX_mul;
+  std::vector<uint64_t> nodes_EX_div;
+
+  uint64_t current_print = 1;
 
   // External Resource Models
   common::StandardRegisterModel regModel;

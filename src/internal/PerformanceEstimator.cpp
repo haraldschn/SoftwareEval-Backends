@@ -47,10 +47,10 @@ void PerformanceEstimator::execute(void) {
         perfModel_ptr->callSchedulingFunction(ch_typeId_ptr[instr_i]);
         perfModel_ptr->update();
         perfModel_ptr->graph.schedule(perfModel_ptr->getLastEntryNode(), false);
+        //std::cout << instr_i + globalInstrCnt << "\n";
     }
 
     globalInstrCnt += instrCnt;
-    //std::cout << globalInstrCnt << "\n";
     //perfModel_ptr->graph.schedule(perfModel_ptr->getLastEntryNode(), false);
     //perfModel_ptr->graph.schedule(globalInstrCnt, false);
 }
@@ -59,7 +59,11 @@ void PerformanceEstimator::finalize(void) {
     //perfModel_ptr->graph.schedule(globalInstrCnt, true);
     perfModel_ptr->graph.schedule(perfModel_ptr->getLastEntryNode(), true);
 
-    std::string ret_string = perfModel_ptr->getPipelineStream();
+    std::string ret_string = "";
+    if (streamer.isActive()) {
+        ret_string = perfModel_ptr->getPipelineStream();
+    }
+    
     while (streamer.isActive() && !ret_string.empty()) {
         streamer.stream(ret_string);
         ret_string = perfModel_ptr->getPipelineStream();

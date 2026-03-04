@@ -44,7 +44,21 @@ enum F_Type {
     EX_stage,
     WB_stage,
     n_JumpDecoder,
+    
     F_SIZE
+};
+
+const uint32_t F_Capacities[]{
+    1, //EMPTY,
+
+    // Order matters (Stage -> Substage -> Resource)
+    1, //IF_stage,
+    1, //ID_stage,
+    1, //EX_stage,
+    1, //WB_stage,
+    1, //n_JumpDecoder,
+
+    1 //F_SIZE
 };
 
 extern SchedulingFunctionSet* CV32E40P_SchedulingFunctionSet;
@@ -59,6 +73,8 @@ public:
     ,divider(this)
     ,divider_u(this)
   {
+    graph.init_capacity(F_Capacities);
+
     nodes_IF.push_back(0);
     nodes_ID.push_back(0);
     nodes_EX.push_back(0);

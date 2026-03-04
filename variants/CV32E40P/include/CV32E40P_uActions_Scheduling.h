@@ -13,7 +13,7 @@ inline void Arith_Ra_Rb(PerformanceModel* perfModel_) {
     uint64_t enterPoint = perfModel->entrancePoint;
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
-    perfModel->graph.add_edge(0, n_IF_stage_ID);
+    perfModel->graph.add_edge(0, n_IF_stage_ID); // Needed to put first node into ready_nodes TODO: make less verbose
     perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);

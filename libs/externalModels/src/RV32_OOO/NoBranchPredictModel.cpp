@@ -33,8 +33,10 @@ std::string NoBranchPredictModel::getInfoHeader()
 std::string NoBranchPredictModel::getInfoStream()
 {
   std::stringstream ret_strs;
-  ret_strs << mispredicted_info;
-  ret_strs << "," << pc_info;
+  //ret_strs << mispredicted_info;
+  //ret_strs << "," << pc_info;
+  ret_strs << 0;
+  ret_strs << "," << 0;
   return ret_strs.str();
 }
 

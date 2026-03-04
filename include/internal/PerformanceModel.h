@@ -27,34 +27,37 @@
 #include <stdbool.h>
 #include <cstdint>
 
-#include <iostream> // TODO: For debug. Remove
+#include <iostream>  // TODO: For debug. Remove
 
 #include "PerformanceScheduler.h"
 
-class MultiElementTimingVariable
-{
-public:
-  MultiElementTimingVariable(int,int);
-  ~MultiElementTimingVariable() { delete[]  fifo; };
+template <typename T>
+inline T back_or_zero(const std::vector<T>& v) noexcept {
+    return v.empty() ? T{0} : v.back();
+}
 
-  void set(uint64_t);
-  uint64_t get(int);
+class MultiElementTimingVariable {
+   public:
+    MultiElementTimingVariable(int, int);
+    ~MultiElementTimingVariable() { delete[] fifo; };
 
-  void replace_min(uint64_t);
-  uint64_t get_min();
-    
-private:
-  const int NUM_ELEMENTS;
+    void set(uint64_t);
+    uint64_t get(int);
 
-  uint64_t* fifo; //Pointer to dynamically allocated array (circular buffer)
-  int ptr = 0;    //Points to newest element's index
+    void replace_min(uint64_t);
+    uint64_t get_min();
+
+   private:
+    const int NUM_ELEMENTS;
+
+    uint64_t* fifo;  // Pointer to dynamically allocated array (circular buffer)
+    int ptr = 0;     // Points to newest element's index
 };
 
 class SchedulingFunctionSet;
 
-class PerformanceModel
-{
-public:
+class PerformanceModel {
+   public:
     PerformanceModel(std::string, SchedulingFunctionSet*);
     PerformanceModel(std::string, SchedulingFunctionSet*, int);
     virtual ~PerformanceModel() = default;
@@ -66,115 +69,117 @@ public:
     void callSchedulingFunction(int);
     void update(void) { instrIndex++; };
     void newTraceBlock(void) { instrIndex = 0; };
-    
+
     virtual uint64_t getCycleCount(void) = 0;
     virtual std::string getPipelineStream(void) = 0;
-    virtual std::string getPrintHeader(void) = 0; 
+    virtual std::string getPrintHeader(void) = 0;
 
-    virtual uint64_t getLastEntryNode(void) = 0; 
-  
-    int instrIndex; // TODO: Make protected, with ConnectorModel as a friend?
+    virtual uint64_t getLastEntryNode(void) = 0;
 
-private:
+    int instrIndex;  // TODO: Make protected, with ConnectorModel as a friend?
+
+   private:
     SchedulingFunctionSet* const schedulingFunctionSet;
     std::map<int, std::function<void(PerformanceModel*)>> schedulingFunction_map;
-public:
+
+   public:
     ResourceGraph graph;
 };
 
 class SchedulingFunction;
 
-class SchedulingFunctionSet
-{
-public:
+class SchedulingFunctionSet {
+   public:
     SchedulingFunctionSet(std::string name_) : name(name_) {};
     const std::string name;
     void addSchedulingFunction(SchedulingFunction*);
-    void foreach(std::function<void(SchedulingFunction &)>);
-private:
+    void foreach (std::function<void(SchedulingFunction&)>);
+
+   private:
     std::set<SchedulingFunction*> schedulingFunction_set;
 };
 
-class SchedulingFunction
-{
-public:
+class SchedulingFunction {
+   public:
     SchedulingFunction(SchedulingFunctionSet*, std::string, int, std::function<void(PerformanceModel*)>);
     ~SchedulingFunction();
 
     const int typeId;
     const std::string name;
 
-private:
+   private:
     SchedulingFunctionSet* const parentSet;
 
-public:
+   public:
     const std::function<void(PerformanceModel*)> schedulingFunction;
 };
 
-class ConnectorModel
-{
-public:
+class ConnectorModel {
+   public:
     ConnectorModel(std::string name_, PerformanceModel* parent_) : name(name_), parentModel(parent_) {};
     virtual ~ConnectorModel() = default;
     const std::string name;
-protected:
+
+   protected:
     int getInstrIndex() { return parentModel->instrIndex; };
-private:
+
+   private:
     PerformanceModel* const parentModel;
 };
 
 // TODO: Merge ConnectorModel and ResourceModel base-classes? Not possible because of virtual getDelay function (needed by DynamicSharedResourceModel)?
-class ResourceModel
-{
-public:
+class ResourceModel {
+   public:
     ResourceModel(std::string name_, PerformanceModel* parent_) : name(name_), parentModel(parent_) {};
     virtual ~ResourceModel() = default;
     virtual int getDelay() = 0;
     const std::string name;
-protected:
+
+   protected:
     int getInstrIndex() { return parentModel->instrIndex; };
-private:
+
+   private:
     PerformanceModel* const parentModel;
 };
 
-//struct ResourceBlockEntry
+// struct ResourceBlockEntry
 //{
-//    int start = 0;
-//    int end = 0;
-//    ResourceBlockEntry(int start_, int end_, std::string info_) : start(start_), end(end_) {};
-//};
+//     int start = 0;
+//     int end = 0;
+//     ResourceBlockEntry(int start_, int end_, std::string info_) : start(start_), end(end_) {};
+// };
 //
-//class SharedResourceModel
+// class SharedResourceModel
 //{
-//public:
-//    virtual ~SharedResourceModel() = default;
+// public:
+//     virtual ~SharedResourceModel() = default;
 //
-//    virtual int getDelayFromResource() = 0;
-//    int getDelay(int);
-//    
-//private:
-//    std::list<ResourceBlockEntry*> blockList;
-//    bool isLastEntry(std::list<ResourceBlockEntry*>::iterator);
-//};
+//     virtual int getDelayFromResource() = 0;
+//     int getDelay(int);
 //
-//class StaticSharedResourceModel : public SharedResourceModel
+// private:
+//     std::list<ResourceBlockEntry*> blockList;
+//     bool isLastEntry(std::list<ResourceBlockEntry*>::iterator);
+// };
+//
+// class StaticSharedResourceModel : public SharedResourceModel
 //{
-//public:
-//    StaticSharedResourceModel(int delay_) : delay(delay_) {};
-//    virtual int getDelayFromResource() { return delay; };
+// public:
+//     StaticSharedResourceModel(int delay_) : delay(delay_) {};
+//     virtual int getDelayFromResource() { return delay; };
 //
-//private:
-//    const int delay;
-//};
+// private:
+//     const int delay;
+// };
 //
-//class DynamicSharedResourceModel : public SharedResourceModel
+// class DynamicSharedResourceModel : public SharedResourceModel
 //{
-//public:
-//    DynamicSharedResourceModel(ResourceModel* resModel_) : resModel(resModel_) {};
-//    virtual int getDelayFromResource() { return resModel->getDelay(); };
+// public:
+//     DynamicSharedResourceModel(ResourceModel* resModel_) : resModel(resModel_) {};
+//     virtual int getDelayFromResource() { return resModel->getDelay(); };
 //
-//private:
-//    ResourceModel* const resModel;
-//};
+// private:
+//     ResourceModel* const resModel;
+// };
 
-#endif // SWEVAL_BACKENDS_PERFORMANCE_MODEL_H
+#endif  // SWEVAL_BACKENDS_PERFORMANCE_MODEL_H

@@ -16,6 +16,8 @@ class ResourceGraph {
    private:
     bool debug;
 
+    const uint32_t* RES_Capacity;
+
     void print_set(std::unordered_set<uint64_t>& input) {
         std::cout << "{";
 
@@ -37,13 +39,13 @@ class ResourceGraph {
     int type_length = 1;
     struct Node {
         uint64_t parent = 0;  // parent stage (0 if none)
-        // ordering asscending by (operands_ready, node_id)
+        // uint64_t next_stage = 0;  // next stage (0 if none)
+        //  ordering asscending by (operands_ready, node_id)
         uint64_t operands_ready = UINT64_MAX;
         uint64_t id = 0;
 
         // Enum in CPU specific PerformanceModel used for type identifier
         int type = 0;
-        uint32_t capacity = 1;
 
         // Latency by default set to a large value (has to be set in any of the later usages)
         uint64_t latency = UINT16_MAX;
@@ -103,27 +105,15 @@ class ResourceGraph {
     };
     ~ResourceGraph() = default;
 
-    uint64_t add_parent_node(int type, uint8_t cap = 1) {
-        Node node_new;
-
-        node_new.type = type;
-        node_new.capacity = cap;
-
-        nodes.push_back(node_new);
-        uint64_t id = nodes.size() - 1;
-        nodes[id].id = id;
-
-        nodes[id].children_unfinished = 0;
-
-        return id;
+    void init_capacity(const uint32_t RES_Cap[]) {
+        this->RES_Capacity = RES_Cap;
     }
 
-    uint64_t add_node(int type, uint64_t latency = 1, uint8_t cap = 1, uint64_t parent_idx = 0) {
+    uint64_t add_node(int type, uint64_t latency = 1, uint64_t parent_idx = 0) {
         Node node_new;
 
         node_new.type = type;
         node_new.latency = latency;
-        node_new.capacity = cap;
 
         nodes.push_back(node_new);
         uint64_t id = nodes.size() - 1;
@@ -145,19 +135,35 @@ class ResourceGraph {
         return id;
     }
 
+    uint64_t add_parent_node(int type, uint64_t parent_idx = 0) {
+        uint64_t id = add_node(type, UINT16_MAX, parent_idx);
+
+        nodes[id].children_unfinished = 0;
+
+        return id;
+    }
+
     void add_edge(const uint64_t& from, const uint64_t& to) {
         if (from != 0) {
             nodes[to].preds.push_back(from);
             nodes[from].succs.push_back(to);
 
             nodes[to].last_new_pred += 1;
-        } else {
+        } else if (nodes[to].succs.size() == 0) {
             ready_nodes.insert(to);
         }
     }
 
-    void add_stage_connection(const uint64_t& curr_stage, std::vector<uint64_t> &prev_stages) {
-        uint64_t i = prev_stages.back();
+    void add_stage_connection(const uint64_t& curr_stage, std::vector<uint64_t>& prev_stages, size_t delay = 0) {
+        uint64_t i = 0;
+
+        if (!prev_stages.empty() && delay == 0) {
+            delay = RES_Capacity[nodes[prev_stages[0]].type];
+        }
+
+        if (!prev_stages.empty() && delay <= prev_stages.size()) {
+            i = prev_stages[prev_stages.size() - delay];
+        }
 
         if (i > 0) {
             for (uint64_t j = 0; j < nodes[i].last_new_pred; j++) {
@@ -208,16 +214,6 @@ class ResourceGraph {
                 uint64_t node_finish = nodes[id].t_LR + nodes[id].latency;
                 if (node_finish <= t) {
                     delete_stack.push_back(id);
-
-                    // for (uint64_t cond_id : nodes[id].exit_cond) {
-                    //     uint64_t cond_finish = nodes[cond_id].t_LR + nodes[cond_id].latency;
-
-                    //     if (nodes[cond_id].t_LR == 0 || cond_finish > t) {
-                    //         delete_stack.pop_back();
-                    //         nodes[id].latency += 1;
-                    //         break;
-                    //     }
-                    // }
                 }
             }
         }
@@ -234,7 +230,7 @@ class ResourceGraph {
                     nodes[parent_id].latency = t - nodes[parent_id].t_LR;
                     int parent_k = nodes[parent_id].type;
                     T_act[parent_k].erase(parent_id);
-                    // Adding succesor of parent
+                    // Adding succesors of parent to candidates
                     add_candidates = true;
                 }
             }
@@ -246,6 +242,8 @@ class ResourceGraph {
     }
 
     void schedule(uint64_t last_node, bool finish_schedule = false) {
+        // std::cout << "ready_node.size() = " << ready_nodes.size() << "\n";
+
         nodes[0].t_LR = 1;
 
         while (nodes[last_node].t_LR == 0 || (finish_schedule && ready_nodes.size() > 0)) {
@@ -261,7 +259,7 @@ class ResourceGraph {
                     pq.push(nodes[u]);
                 }
 
-                while (!pq.empty() && (S_act[k].size() + T_act[k].size() < pq.top().capacity)) {
+                while (!pq.empty() && (S_act[k].size() + T_act[k].size() < RES_Capacity[k])) {
                     int id_max = pq.top().id;
                     pq.pop();
 
@@ -298,6 +296,10 @@ class ResourceGraph {
 
             t_curr += 1;
         }
+
+        // Multi-issue adaption:
+        // allows stage times to be equal althoug next instruction is added after calling schedule function
+        t_curr -= 1;
     }
 
     /// helper functions for std output
@@ -324,6 +326,14 @@ class ResourceGraph {
 
     uint64_t get_node_t_end(uint64_t curr_node_id) {
         return nodes[curr_node_id].t_LR + nodes[curr_node_id].latency - 1;
+    }
+
+    uint64_t get_node_t_end(uint64_t curr_node_id, uint64_t print_node_id, int type) {
+        if (type == nodes[curr_node_id].type) {
+            return nodes[print_node_id].t_LR - 1;
+        }
+
+        return 0;
     }
 };
 
