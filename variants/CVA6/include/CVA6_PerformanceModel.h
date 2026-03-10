@@ -42,52 +42,56 @@ namespace CVA6{
 enum F_Type {
     EMPTY,
     // Order matters (Stage -> Substage -> Resource)
-    PC_stage,
-    IF_stage,
-    IQ_stage,
-    ID_stage,
-    IS_stage,
-    EX_stage,
     COM_stage,
-    IF_substage_0,
-    IF_substage_1,
-    IF_substage_2,
-    EX_substage_alu,
-    EX_substage_mul_i,
-    EX_substage_mul_o,
-    EX_substage_div,
-    EX_substage_lCtrl,
-    EX_substage_dCache,
-    EX_substage_lUnit,
-    EX_substage_sCtrl,
+    EX_stage,
+    IS_stage,
+    ID_stage,
+    IQ_stage,
+    IF_stage,
+    PC_stage,
+    
     EX_substage_sUnit,
+    EX_substage_sCtrl,
+    EX_substage_lUnit,
+    EX_substage_dCache,
+    EX_substage_lCtrl,
+    EX_substage_div,
+    EX_substage_mul_o,
+    EX_substage_mul_i,
+    EX_substage_alu,
+    
+    IF_substage_2,
+    IF_substage_1,
+    IF_substage_0,
+
     F_SIZE
 };
 
 const uint32_t F_Capacities[]{
     1, //EMPTY,
     // Order matters (Stage -> Substage -> Resource)
-    1, //PC_stage,
-    3, //IF_stage,
-    7, //IQ_stage,
-    1, //ID_stage,
-    1, //IS_stage,
-    8, //EX_stage,
     2, //COM_stage,
-
-    1, //IF_substage_0,
-    1, //IF_substage_1,
-    1, //IF_substage_2,
-    1, //EX_substage_alu,
-    1, //EX_substage_mul_i,
-    1, //EX_substage_mul_o,
-    1, //EX_substage_div,
-    1, //EX_substage_lCtrl,
-    1, //EX_substage_dCache,
-    1, //EX_substage_lUnit,
-    1, //EX_substage_sCtrl,
+    8, //EX_stage,
+    1, //IS_stage,
+    1, //ID_stage,
+    7, //IQ_stage,
+    3, //IF_stage,
+    1, //PC_stage,
+    
     1, //EX_substage_sUnit,
+    1, //EX_substage_sCtrl,
+    1, //EX_substage_lUnit,
+    1, //EX_substage_dCache,
+    1, //EX_substage_lCtrl,
+    1, //EX_substage_div,
+    1, //EX_substage_mul_o,
+    1, //EX_substage_mul_i,
+    1, //EX_substage_alu,
 
+    1, //IF_substage_2,
+    1, //IF_substage_1,
+    1, //IF_substage_0,
+    
     1 //F_SIZE
 };
 
@@ -115,9 +119,6 @@ public:
     nodes_IS.push_back(0);
     nodes_EX.push_back(0);
     nodes_COM.push_back(0);
-
-    nodes_EX_mul.push_back(0);
-    nodes_EX_div.push_back(0);
   };
 
   // Entrance-point "timing variable" (only used for info-stream)
@@ -132,12 +133,15 @@ public:
   std::vector<uint64_t> nodes_EX;
   std::vector<uint64_t> nodes_COM;
 
-  std::vector<uint64_t> nodes_IF_substage_0;
-  std::vector<uint64_t> nodes_IF_substage_1;
-  std::vector<uint64_t> nodes_IF_substage_2;
+  uint64_t last_IF_substage = 0;
+  uint64_t last_EX_substage = 0;
 
-  std::vector<uint64_t> nodes_EX_mul;
-  std::vector<uint64_t> nodes_EX_div;
+  uint64_t last_EX_alu = 0;
+  uint64_t last_EX_mul_i = 0;
+  uint64_t last_EX_mul_o = 0;
+  uint64_t last_EX_div = 0;
+  uint64_t last_EX_sCtrl = 0;
+  uint64_t last_EX_lCtrl = 0;
 
   uint64_t current_print = 1;
 

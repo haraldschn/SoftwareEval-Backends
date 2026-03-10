@@ -41,23 +41,23 @@ enum F_Type {
     // Order matters (Parent Stage -> Substage -> Resource)
 
     // Parent - Stages
-    PC_stage,
-    IF_stage,
-    IS_stage,
-    IB_stage,
     WB_stage,
+    IB_stage,
+    IS_stage,
+    IF_stage,
+    PC_stage,
 
     // Child - Stages
     EX_stage,
 
     // Execute Substages
     EX_div,
-    EX_mul_i,
     EX_mul_o,
+    EX_mul_i,
     EX_add,
     EX_alu,
-    EX_lsu,
     EX_lsu2,
+    EX_lsu,
 
     F_SIZE
 };
@@ -67,23 +67,23 @@ const uint32_t F_Capacities[]{
     // Order matters (Parent Stage -> Substage -> Resource)
 
     // Parent - Stages
-    2, // PC_stage,
-    2, // IF_stage,
-    2, // IS_stage,
-    4, // IB_stage,
     4, // WB_stage,
-
+    4, // IB_stage,
+    2, // IS_stage,
+    2, // IF_stage,
+    2, // PC_stage,
+    
     // Child - Stages
     1, // EX_stage,
 
     // Execute Substages
     1, // EX_div,
-    1, // EX_mul_i,
     1, // EX_mul_o,
+    1, // EX_mul_i,
     1, // EX_add,
     1, // EX_alu,
-    1, // EX_lsu,
     1, // EX_lsu2,
+    1, // EX_lsu,
 
     1 // F_SIZE
 };
@@ -94,6 +94,13 @@ class RV32_OOO_PerformanceModel : public PerformanceModel {
    public:
     RV32_OOO_PerformanceModel() : PerformanceModel("RV32_OOO", RV32_OOO_SchedulingFunctionSet, F_Type::F_SIZE), regModel(this), noBranchPredModel(this), clobberModel(this) {
         graph.init_capacity(F_Capacities);
+
+        nodes_PC.push_back(0);
+        nodes_IF.push_back(0);
+        nodes_IS.push_back(0);
+        nodes_IB.push_back(0);
+        nodes_EX.push_back(0);
+        nodes_WB.push_back(0);
     };
 
     // Entrance-point "timing variable" (only used for info-stream)
@@ -108,7 +115,7 @@ class RV32_OOO_PerformanceModel : public PerformanceModel {
 
     std::vector<std::string> staBranchPredModel_trace;
 
-    uint64_t current_print = 0;
+    uint64_t current_print = 1;
 
     // External Resource Models
     RV32_OOO::OoORegisterModel regModel;

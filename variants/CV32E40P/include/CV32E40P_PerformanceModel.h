@@ -38,12 +38,13 @@ namespace CV32E40P{
 // currently only Stages
 enum F_Type {
     EMPTY,
-    // Order matters (Stage -> Substage -> Resource)
-    IF_stage,
-    ID_stage,
-    EX_stage,
+    // Order matters 
+    // 1. In reverse order from stage connections
+    // 2. From parent to child nodes: Stage -> Substage -> Resource
     WB_stage,
-    n_JumpDecoder,
+    EX_stage,
+    ID_stage,
+    IF_stage,
     
     F_SIZE
 };
@@ -52,11 +53,10 @@ const uint32_t F_Capacities[]{
     1, //EMPTY,
 
     // Order matters (Stage -> Substage -> Resource)
-    1, //IF_stage,
-    1, //ID_stage,
-    1, //EX_stage,
     1, //WB_stage,
-    1, //n_JumpDecoder,
+    1, //EX_stage,
+    1, //ID_stage,
+    1, //IF_stage,
 
     1 //F_SIZE
 };

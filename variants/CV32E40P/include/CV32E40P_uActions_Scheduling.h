@@ -13,28 +13,23 @@ inline void Arith_Ra_Rb(PerformanceModel* perfModel_) {
     uint64_t enterPoint = perfModel->entrancePoint;
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
-    perfModel->graph.add_edge(0, n_IF_stage_ID); // Needed to put first node into ready_nodes TODO: make less verbose
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
+    perfModel->graph.add_edge(0, n_IF_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    // perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    // perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
     // ALU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -54,25 +49,20 @@ inline void Arith_Ra(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
-    uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
     
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
+
     // ALU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
 
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
@@ -93,24 +83,20 @@ inline void Arith_X(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
     // ALU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -130,28 +116,22 @@ inline void Mul_Ra_Rb(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
+    // MUL delay = 1
     uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
-    // ALU delay = 1
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -171,28 +151,22 @@ inline void MulH_Ra_Rb(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage, 5);
     // MULH delay = 5
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage, 5);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -212,28 +186,22 @@ inline void Div_Ra_Rb(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage, perfModel->divider.getDelay());
     // DIV delay = Resource model Divider
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage, perfModel->divider.getDelay());
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -253,28 +221,22 @@ inline void DivU_Ra_Rb(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage, perfModel->divider_u.getDelay());
     // DIVU delay = Resource model DividerU
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage, perfModel->divider_u.getDelay());
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -294,25 +256,20 @@ inline void Csr_Ra(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
+    // ALU delay = 1
     uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
-    // CSR delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
 
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
@@ -333,24 +290,20 @@ inline void Csr_X(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
-
+    
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
+    // ALU delay = 1
     uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
-    // CSR delay = 1
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -370,31 +323,24 @@ inline void Store(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
 
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
     uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
-    // LSU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
 
-    uint64_t n_WB_stage_ID = perfModel->graph.add_node(F_Type::WB_stage);
     // DPort_W delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_WB.back(), n_WB_stage_ID);
-    perfModel->graph.add_edge(n_EX_stage_ID, n_WB_stage_ID);
+    uint64_t n_WB_stage_ID = perfModel->graph.add_node(F_Type::WB_stage);
+    perfModel->graph.add_stage_connection(n_EX_stage_ID, n_WB_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_WB.back(), n_WB_stage_ID);
 
     // Add Nodes IDs to Stack
     perfModel->nodes_IF.push_back(n_IF_stage_ID);
@@ -413,29 +359,23 @@ inline void Load(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
 
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
     uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
-    // LSU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
 
-    uint64_t n_WB_stage_ID = perfModel->graph.add_node(F_Type::WB_stage);
     // DPort_W delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_WB.back(), n_WB_stage_ID);
-    perfModel->graph.add_edge(n_EX_stage_ID, n_WB_stage_ID);
+    uint64_t n_WB_stage_ID = perfModel->graph.add_node(F_Type::WB_stage);
+    perfModel->graph.add_stage_connection(n_EX_stage_ID, n_WB_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_WB.back(), n_WB_stage_ID);
     perfModel->regModel.setXd(n_WB_stage_ID);
 
     // Add Nodes IDs to Stack
@@ -455,28 +395,22 @@ inline void Branch_Ra_Rb(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
 
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXa());
-    //perfModel->graph.add_exit_cond(n_ID_stage_ID,perfModel->regModel.getXb());
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
     // ALU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_EX_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXb(), n_EX_stage_ID);
     perfModel->staBranchPredModel.setPc_np(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
-
+    
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
     // Add Nodes IDs to Stack
@@ -496,11 +430,9 @@ inline void Default_Inst(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
 
     uint64_t n_ID_stage_ID = perfModel->nodes_ID.back();
     uint64_t n_EX_stage_ID = perfModel->nodes_EX.back();
@@ -523,24 +455,20 @@ inline void JAL(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
 
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
     perfModel->staBranchPredModel.setPc_np(n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
     // ALU delay = 1
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
 
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 
@@ -561,25 +489,21 @@ inline void JALR(PerformanceModel* perfModel_) {
 
     uint64_t n_IF_stage_ID = perfModel->graph.add_node(F_Type::IF_stage);
     perfModel->graph.add_edge(0, n_IF_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_IF.back(), n_IF_stage_ID);
-
+    perfModel->graph.set_inorder(perfModel->nodes_IF.back(), n_IF_stage_ID);
     perfModel->graph.add_edge(perfModel->staBranchPredModel.getPc(), n_IF_stage_ID);
     perfModel->staBranchPredModel.setPc_p(n_IF_stage_ID);
-    perfModel->graph.add_stage_connection(n_IF_stage_ID, perfModel->nodes_ID);
 
     uint64_t n_ID_stage_ID = perfModel->graph.add_node(F_Type::ID_stage);
-    perfModel->graph.add_edge(perfModel->nodes_ID.back(), n_ID_stage_ID);
-    perfModel->graph.add_edge(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.add_stage_connection(n_IF_stage_ID, n_ID_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_ID.back(), n_ID_stage_ID);
     perfModel->graph.add_edge(perfModel->regModel.getXa(), n_ID_stage_ID);
     perfModel->staBranchPredModel.setPc_np(n_ID_stage_ID);
-    perfModel->graph.add_stage_connection(n_ID_stage_ID, perfModel->nodes_EX);
 
-    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
     // ALU delay = 1
-    perfModel->graph.add_edge(n_ID_stage_ID, n_EX_stage_ID);
-    perfModel->graph.add_edge(perfModel->nodes_EX.back(), n_EX_stage_ID);
+    uint64_t n_EX_stage_ID = perfModel->graph.add_node(F_Type::EX_stage);
+    perfModel->graph.add_stage_connection(n_ID_stage_ID, n_EX_stage_ID);
+    perfModel->graph.set_inorder(perfModel->nodes_EX.back(), n_EX_stage_ID);
     perfModel->regModel.setXd(n_EX_stage_ID);
-    perfModel->graph.add_stage_connection(n_EX_stage_ID, perfModel->nodes_WB);
 
     uint64_t n_WB_stage_ID = perfModel->nodes_WB.back();
 

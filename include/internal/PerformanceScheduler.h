@@ -9,7 +9,6 @@
 
 #include <vector>
 #include <queue>
-#include <unordered_map>
 #include <unordered_set>
 
 class ResourceGraph {
@@ -38,22 +37,27 @@ class ResourceGraph {
 
     int type_length = 1;
     struct Node {
-        uint64_t parent = 0;  // parent stage (0 if none)
-        // uint64_t next_stage = 0;  // next stage (0 if none)
-        //  ordering asscending by (operands_ready, node_id)
+        // General node values
         uint64_t operands_ready = UINT64_MAX;
         uint64_t id = 0;
+        uint64_t inorder_prev = 0;
 
         // Enum in CPU specific PerformanceModel used for type identifier
         int type = 0;
 
         // Latency by default set to a large value (has to be set in any of the later usages)
-        uint64_t latency = UINT16_MAX;
+        uint64_t latency = 1;
         uint64_t t_LR = 0;
+        uint64_t t_exit = 0;
 
-        uint64_t last_new_pred = 0;
+        // Stage handling
+        uint64_t next_stage = 0;  // next stage (0 if none)
+
+        // Parent Child relation
+        uint64_t parent = 0;      // parent stage (0 if none)
         int children_unfinished = -1;
 
+        // IDs to predecessor and successor nodes
         std::vector<uint64_t> preds;
         std::vector<uint64_t> succs;
     };
@@ -62,6 +66,10 @@ class ResourceGraph {
     // operator overloading for Node comparision using std::greater
     struct CompareNodes {
         bool operator()(const Node& a, const Node& b) {
+            // operands_ready inorder prev.
+            if (a.inorder_prev != b.inorder_prev) {
+                return a.inorder_prev > b.inorder_prev;  // lower
+            }
             // operands_ready in ascending order.
             if (a.operands_ready != b.operands_ready) {
                 return a.operands_ready > b.operands_ready;  // lower
@@ -136,8 +144,7 @@ class ResourceGraph {
     }
 
     uint64_t add_parent_node(int type, uint64_t parent_idx = 0) {
-        uint64_t id = add_node(type, UINT16_MAX, parent_idx);
-
+        uint64_t id = add_node(type, 1, parent_idx);
         nodes[id].children_unfinished = 0;
 
         return id;
@@ -147,29 +154,18 @@ class ResourceGraph {
         if (from != 0) {
             nodes[to].preds.push_back(from);
             nodes[from].succs.push_back(to);
-
-            nodes[to].last_new_pred += 1;
         } else if (nodes[to].succs.size() == 0) {
             ready_nodes.insert(to);
         }
     }
 
-    void add_stage_connection(const uint64_t& curr_stage, std::vector<uint64_t>& prev_stages, size_t delay = 0) {
-        uint64_t i = 0;
+    void add_stage_connection(const uint64_t& prev_stage, const uint64_t& curr_stage) {
+        add_edge(prev_stage, curr_stage);
+        nodes[prev_stage].next_stage = curr_stage;
+    }
 
-        if (!prev_stages.empty() && delay == 0) {
-            delay = RES_Capacity[nodes[prev_stages[0]].type];
-        }
-
-        if (!prev_stages.empty() && delay <= prev_stages.size()) {
-            i = prev_stages[prev_stages.size() - delay];
-        }
-
-        if (i > 0) {
-            for (uint64_t j = 0; j < nodes[i].last_new_pred; j++) {
-                nodes[curr_stage].preds.push_back(nodes[i].preds[j]);
-            }
-        }
+    void set_inorder(const uint64_t& prev, const uint64_t& curr) {
+        nodes[curr].inorder_prev = prev;
     }
 
     void find_candidate_operations(uint64_t t) {
@@ -179,9 +175,9 @@ class ResourceGraph {
             bool all_finished = true;
             uint64_t max_pred_finished = 0;
             for (uint64_t p : nodes[id].preds) {
-                uint64_t t_pred_finish = nodes[p].t_LR + nodes[p].latency;
+                uint64_t t_pred_finish = nodes[p].t_exit;
                 // Predecessor order influences runtime
-                if (nodes[p].t_LR == 0 || t_pred_finish > t) {
+                if (nodes[p].t_LR == 0 || t_pred_finish > t || nodes[p].children_unfinished > 0) {
                     all_finished = false;
                     break;
                 }
@@ -201,19 +197,25 @@ class ResourceGraph {
         }
     }
 
-    void find_running_operations(uint64_t t) {
-        bool add_candidates = false;
+    void find_running_operations(uint64_t t, int k) {
         std::vector<uint64_t> delete_stack;
 
-        for (int k = 1; k < type_length; k++) {
-            for (uint64_t id : S_act[k]) {
-                T_act[k].insert(id);
-            }
+        for (uint64_t id : S_act[k]) {
+            T_act[k].insert(id);
+        }
 
-            for (uint64_t id : T_act[k]) {
-                uint64_t node_finish = nodes[id].t_LR + nodes[id].latency;
-                if (node_finish <= t) {
+        for (uint64_t id : T_act[k]) {
+            uint64_t next_stage = nodes[id].next_stage;
+
+            if (next_stage == 0) {
+                if (nodes[id].t_exit <= t) {
                     delete_stack.push_back(id);
+                }
+            } else {
+                if (nodes[id].t_exit <= t && nodes[next_stage].t_LR >= t) {
+                    delete_stack.push_back(id);
+                } else if(nodes[id].t_exit <= t) {
+                    nodes[id].t_exit++;
                 }
             }
         }
@@ -221,23 +223,6 @@ class ResourceGraph {
         for (uint64_t id : delete_stack) {
             int k = nodes[id].type;
             T_act[k].erase(id);
-
-            uint64_t parent_id = nodes[id].parent;
-            if (parent_id != 0) {
-                nodes[parent_id].children_unfinished -= 1;
-
-                if (nodes[parent_id].children_unfinished == 0) {
-                    nodes[parent_id].latency = t - nodes[parent_id].t_LR;
-                    int parent_k = nodes[parent_id].type;
-                    T_act[parent_k].erase(parent_id);
-                    // Adding succesors of parent to candidates
-                    add_candidates = true;
-                }
-            }
-        }
-
-        if (add_candidates) {
-            find_candidate_operations(t);
         }
     }
 
@@ -248,9 +233,10 @@ class ResourceGraph {
 
         while (nodes[last_node].t_LR == 0 || (finish_schedule && ready_nodes.size() > 0)) {
             find_candidate_operations(t_curr);
-            find_running_operations(t_curr);
 
             for (int k = 1; k < type_length; k++) {
+                find_running_operations(t_curr, k);
+
                 S_act[k].clear();
 
                 // pq could be represented by using a priority_queue for U_act ?
@@ -263,13 +249,23 @@ class ResourceGraph {
                     int id_max = pq.top().id;
                     pq.pop();
 
+                    if(nodes[id_max].inorder_prev != 0 && nodes[nodes[id_max].inorder_prev].operands_ready == UINT64_MAX) {
+                        break;
+                    }
+
                     uint64_t parent_id = nodes[id_max].parent;
-                    if (parent_id != 0 && nodes[parent_id].t_LR == 0) {
-                        continue;
+                    if (parent_id != 0) {
+                        if (nodes[parent_id].t_LR == 0) {
+                            continue;
+                        } else {
+                            nodes[parent_id].children_unfinished -= 1;
+                        }
+                        
                     }
 
                     S_act[k].insert(id_max);
                     nodes[id_max].t_LR = t_curr;
+                    nodes[id_max].t_exit = t_curr + nodes[id_max].latency;
 
                     // Add succesors to ready nodes
                     for (uint64_t s : nodes[id_max].succs) {
@@ -325,7 +321,7 @@ class ResourceGraph {
     }
 
     uint64_t get_node_t_end(uint64_t curr_node_id) {
-        return nodes[curr_node_id].t_LR + nodes[curr_node_id].latency - 1;
+        return nodes[curr_node_id].t_exit - 1;
     }
 
     uint64_t get_node_t_end(uint64_t curr_node_id, uint64_t print_node_id, int type) {
