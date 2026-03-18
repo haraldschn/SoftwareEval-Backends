@@ -28,7 +28,10 @@
 #include "RV32_OOO_Channel.h"
 
 #include "models/RV32_OOO/OoORegisterModel.h"
+
 #include "models/RV32_OOO/NoBranchPredictModel.h"
+#include "models/RV32_OOO/BranchPredictionModel.h"
+
 #include "models/RV32_OOO/ClobberModel.h"
 
 namespace RV32_OOO {
@@ -39,6 +42,9 @@ void RV32_OOO_PerformanceModel::connectChannel(Channel* channel_) {
     regModel.rs1_ptr = channel->rs1;
     regModel.rs2_ptr = channel->rs2;
     regModel.rd_ptr = channel->rd;
+
+    noBranchPredModel.pc_ptr = channel->pc;
+    noBranchPredModel.brTarget_ptr = channel->brTarget;
 
     clobberModel.rs1_ptr = channel->rs1;
     clobberModel.rs2_ptr = channel->rs2;

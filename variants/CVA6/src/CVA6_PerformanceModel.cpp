@@ -96,8 +96,11 @@ std::string CVA6_PerformanceModel::getPipelineStream(void) {
         ret_strs << "," << graph.get_node_t_start(nodes_COM[current_print]);
         ret_strs << "," << graph.get_node_t_end(nodes_COM[current_print]);
         // ret_strs << "," << dynBranchPredModel.getInfoStream();
+        ret_strs << ",0,0,0";
         // ret_strs << "," << iCacheModel.getInfoStream();
+        ret_strs << ",0";
         // ret_strs << "," << dCacheModel.getInfoStream();
+        ret_strs << ",0";
         ret_strs << std::endl;
         current_print += 1;
     }
@@ -115,9 +118,9 @@ std::string CVA6_PerformanceModel::getPrintHeader(void) {
     ret_strs << "," << "IS_stage";
     ret_strs << "," << "EX_stage";
     ret_strs << "," << "COM_stage";
-    // ret_strs << "," << dynBranchPredModel.getInfoHeader();
-    // ret_strs << "," << iCacheModel.getInfoHeader();
-    // ret_strs << "," << dCacheModel.getInfoHeader();
+    ret_strs << "," << dynBranchPredModel.getInfoHeader();
+    ret_strs << "," << iCacheModel.getInfoHeader();
+    ret_strs << "," << dCacheModel.getInfoHeader();
     ret_strs << std::endl;
     return ret_strs.str();
 }

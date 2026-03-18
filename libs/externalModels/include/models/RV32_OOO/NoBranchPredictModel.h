@@ -28,6 +28,9 @@ class NoBranchPredictModel : public ConnectorModel {
    public:
     NoBranchPredictModel(PerformanceModel* parent_) : ConnectorModel("RV32_OOO_NoBranchPredictModel", parent_) {};
 
+    uint64_t* pc_ptr;
+    uint64_t* brTarget_ptr;
+
     void setPc_p(uint64_t pc_p_) {};
     void setPc_np(uint64_t pc_np_) { pc = pc_np_; };
     uint64_t getPc(void) { return pc; };

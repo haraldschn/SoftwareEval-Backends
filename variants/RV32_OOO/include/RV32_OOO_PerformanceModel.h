@@ -27,7 +27,10 @@
 #include "Channel.h"
 
 #include "models/RV32_OOO/OoORegisterModel.h"
+
 #include "models/RV32_OOO/NoBranchPredictModel.h"
+#include "models/RV32_OOO/BranchPredictionModel.h"
+
 #include "models/RV32_OOO/ClobberModel.h"
 
 namespace RV32_OOO {
@@ -56,6 +59,7 @@ enum F_Type {
     EX_mul_i,
     EX_add,
     EX_alu,
+    EX_lsu3,
     EX_lsu2,
     EX_lsu,
 
@@ -82,6 +86,7 @@ const uint32_t F_Capacities[]{
     1, // EX_mul_i,
     1, // EX_add,
     1, // EX_alu,
+    1, // EX_lsu3,
     1, // EX_lsu2,
     1, // EX_lsu,
 
@@ -113,13 +118,17 @@ class RV32_OOO_PerformanceModel : public PerformanceModel {
     std::vector<uint64_t> nodes_EX;  // Get Node type from individual Node
     std::vector<uint64_t> nodes_WB;
 
-    std::vector<std::string> staBranchPredModel_trace;
+    std::vector<std::string> noBranchPredModel_trace;
 
     uint64_t current_print = 1;
 
     // External Resource Models
     RV32_OOO::OoORegisterModel regModel;
-    RV32_OOO::NoBranchPredictModel noBranchPredModel;
+
+    // Trying different Branch Predictor Models
+    //RV32_OOO::NoBranchPredictModel noBranchPredModel;
+    RV32_OOO::BranchPredictModel noBranchPredModel;
+
     RV32_OOO::ClobberModel clobberModel;
 
     virtual void connectChannel(Channel*);

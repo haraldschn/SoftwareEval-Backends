@@ -37,6 +37,7 @@ public:
   uint64_t rs2 [100];
   uint64_t rd [100];
   uint64_t pc [100];
+  uint64_t brTarget [100];
   uint64_t addr [100];
 
   virtual void *getTraceValueHook(std::string);
