@@ -684,6 +684,7 @@ inline void JALR(PerformanceModel* perfModel_) {
     uint64_t n_IB_stage_ID = perfModel->graph.add_parent_node(F_Type::IB_stage);
     perfModel->graph.add_stage_connection(n_IS_stage_ID, n_IB_stage_ID);
     perfModel->graph.set_inorder(perfModel->nodes_IB.back(), n_IB_stage_ID);
+    perfModel->graph.add_edge(perfModel->regModel.getXa(), n_IB_stage_ID);
     perfModel->graph.add_edge(perfModel->clobberModel.getCb_out(), n_IB_stage_ID);
     perfModel->noBranchPredModel.setPc_np(n_IB_stage_ID);
 
